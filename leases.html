@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RentSys Pro — Leases</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+<link rel="stylesheet" href="assets/css/app.css"/>
+</head>
+<body data-page-perm="leases.view">
+
+<div class="sidebar" id="sidebar">
+<div class="logo"><i class="fa-solid fa-building"></i><span>RentSys Pro</span></div>
+<div class="menu">
+<a href="dashboard.html" data-perm="dashboard.view"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a>
+<a href="apartments.html" data-perm="apartments.view"><i class="fa-solid fa-building-user"></i><span>Apartments</span></a>
+<a href="rooms.html" data-perm="rooms.view"><i class="fa-solid fa-door-open"></i><span>Rooms</span></a>
+<a href="tenants.html" data-perm="tenants.view"><i class="fa-solid fa-users"></i><span>Tenants</span></a>
+<a href="leases.html" class="active" data-perm="leases.view"><i class="fa-solid fa-file-contract"></i><span>Leases</span></a>
+<a href="payments.html" data-perm="payments.view"><i class="fa-solid fa-money-bill-wave"></i><span>Payments</span></a>
+<a href="rent_deposits.html" data-perm="rent_deposits.view"><i class="fa-solid fa-hand-holding-dollar"></i><span>Rent Deposits</span></a>
+<a href="maintenance.html" data-perm="maintenance.view"><i class="fa-solid fa-screwdriver-wrench"></i><span>Maintenance</span></a>
+<a href="reports.html" data-perm="reports.view"><i class="fa-solid fa-chart-column"></i><span>Reports</span></a>
+<a href="users.html" data-perm="users.view"><i class="fa-solid fa-user-shield"></i><span>Users</span></a>
+<a href="settings.html" data-perm="settings.view"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+</div>
+<div class="sidebar-footer">
+<a href="#" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+</div>
+</div>
+
+<div class="topbar" id="topbar">
+<div class="left">
+<div class="toggle" id="toggle"><i class="fa-solid fa-bars"></i></div>
+<div class="search"><i class="fa fa-search"></i><input type="text" id="searchInput" placeholder="Search leases..."></div>
+</div>
+<div class="right">
+<button type="button" class="logout-btn" title="Logout"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></button>
+<div class="profile">
+<div class="avatar" id="avatarLetter">A</div>
+<div><strong id="userName">Administrator</strong><br><small id="userRole">Super Admin</small></div>
+</div>
+</div>
+</div>
+
+<div class="content" id="content">
+<div class="page-title">Leases</div>
+<div class="breadcrumb">Home / Leases</div>
+
+<div class="stats-row">
+<div class="stat-mini"><h3 id="statTotal">0</h3><p>Total Leases</p></div>
+<div class="stat-mini"><h3 id="statActive">0</h3><p>Active</p></div>
+<div class="stat-mini"><h3 id="statRent">KES 0</h3><p>Monthly Rent (Active)</p></div>
+</div>
+
+<div class="toolbar">
+<div class="toolbar-left">
+<select class="filter-select" id="statusFilter">
+<option value="">All Statuses</option>
+<option value="active">Active</option>
+<option value="expired">Expired</option>
+<option value="terminated">Terminated</option>
+</select>
+</div>
+<div class="toolbar-right">
+<button class="btn btn-primary" id="addBtn" data-perm="leases.create"><i class="fa-solid fa-plus"></i> Add Lease</button>
+</div>
+</div>
+
+<div class="panel">
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Tenant</th>
+<th>Room</th>
+<th>Apartment</th>
+<th>Start</th>
+<th>End</th>
+<th>Monthly Rent</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+</div>
+<div class="empty-state" id="emptyState" style="display:none">
+<i class="fa-solid fa-file-contract"></i>
+<p>No leases found. Create a lease to assign tenants to rooms.</p>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="leaseModal">
+<div class="modal">
+<div class="modal-header">
+<h3 id="modalTitle">Add Lease</h3>
+<button class="modal-close" data-close="leaseModal">&times;</button>
+</div>
+<div class="modal-body">
+<div class="alert" id="modalAlert"></div>
+<form id="leaseForm">
+<input type="hidden" id="leaseId">
+<div class="form-grid">
+<div class="form-group full">
+<label for="tenant_id">Tenant *</label>
+<select class="form-control" id="tenant_id" required></select>
+</div>
+<div class="form-group full">
+<label for="apartment_id">Property *</label>
+<select class="form-control" id="apartment_id" required></select>
+</div>
+<div class="form-group full">
+<label for="room_id">Room *</label>
+<select class="form-control" id="room_id" required></select>
+</div>
+<div class="form-group">
+<label for="start_date">Start Date *</label>
+<input class="form-control" type="date" id="start_date" required>
+</div>
+<div class="form-group">
+<label for="end_date">End Date</label>
+<input class="form-control" type="date" id="end_date">
+</div>
+<div class="form-group">
+<label for="monthly_rent">Monthly Rent (KES)</label>
+<input class="form-control" type="number" id="monthly_rent" min="0" step="0.01" value="0">
+</div>
+<div class="form-group">
+<label for="deposit_amount">One-time Rent Deposit (KES)</label>
+<input class="form-control" type="number" id="deposit_amount" min="0" step="0.01" value="0" readonly>
+</div>
+<div class="form-group">
+<label for="status">Status</label>
+<select class="form-control" id="status">
+<option value="active">Active</option>
+<option value="expired">Expired</option>
+<option value="terminated">Terminated</option>
+</select>
+</div>
+<div class="form-group full">
+<label for="notes">Notes</label>
+<textarea class="form-control" id="notes"></textarea>
+</div>
+</div>
+</form>
+</div>
+<div class="modal-footer">
+<button class="btn btn-secondary" data-close="leaseModal">Cancel</button>
+<button class="btn btn-primary" id="saveBtn">Save Lease</button>
+</div>
+</div>
+</div>
+
+<script src="assets/js/app.js"></script>
+<script>
+let leases = [];
+let tenants = [];
+let rooms = [];
+let apartments = [];
+
+const params = new URLSearchParams(window.location.search);
+const presetTenantId = params.get('tenant_id') || '';
+
+async function loadOptions() {
+    const [tenantData, roomData, apartmentData] = await Promise.all([
+        apiRequest('api/tenants.php'),
+        apiRequest('api/rooms.php'),
+        apiRequest('api/apartments.php'),
+    ]);
+    tenants = tenantData.tenants || [];
+    rooms = roomData.rooms || [];
+    apartments = apartmentData.apartments || [];
+
+    const tenantSelect = document.getElementById('tenant_id');
+    tenantSelect.innerHTML = '<option value="">Select tenant</option>' +
+        tenants.filter(t => Number(t.is_active)).map(t =>
+            `<option value="${t.id}">${escapeHtml(t.full_name)}</option>`
+        ).join('');
+
+    const apartmentSelect = document.getElementById('apartment_id');
+    apartmentSelect.innerHTML = '<option value="">Select property</option>' +
+        apartments.map(a => `<option value="${a.id}">${escapeHtml(a.name)}</option>`).join('');
+    populateRooms();
+}
+
+function populateRooms(selectedId) {
+    const roomSelect = document.getElementById('room_id');
+    const apartmentId = Number(document.getElementById('apartment_id').value);
+    const propertyRooms = apartmentId ? rooms.filter(r => Number(r.apartment_id) === apartmentId) : [];
+    roomSelect.innerHTML = '<option value="">Select room</option>' +
+        propertyRooms.map(r =>
+            `<option value="${r.id}" data-rent="${r.rent_amount}">${escapeHtml(r.apartment_name)} — ${escapeHtml(r.room_number)} (${r.status})</option>`
+        ).join('');
+    if (apartmentId && !propertyRooms.length) {
+        roomSelect.innerHTML = '<option value="">No rooms in this property - add a room first</option>';
+    }
+    if (selectedId) roomSelect.value = selectedId;
+}
+
+function fillApartmentDeposit() {
+    if (document.getElementById('leaseId').value) return;
+    const apartmentId = Number(document.getElementById('apartment_id').value);
+    const apartment = apartments.find(a => Number(a.id) === apartmentId);
+    document.getElementById('deposit_amount').value = apartment ? Number(apartment.rent_deposit_amount || 0) : 0;
+}
+
+async function loadLeases() {
+    const status = document.getElementById('statusFilter').value;
+    let url = 'api/leases.php';
+    const query = [];
+    if (presetTenantId) query.push(`tenant_id=${presetTenantId}`);
+    if (status) query.push(`status=${status}`);
+    if (query.length) url += '?' + query.join('&');
+
+    const data = await apiRequest(url);
+    if (!data.success) throw new Error(data.message);
+    leases = data.leases || [];
+    renderTable();
+}
+
+function renderTable() {
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const filtered = leases.filter(l =>
+        l.tenant_name.toLowerCase().includes(query) ||
+        l.room_number.toLowerCase().includes(query) ||
+        l.apartment_name.toLowerCase().includes(query)
+    );
+
+    document.getElementById('statTotal').textContent = leases.length;
+    document.getElementById('statActive').textContent = leases.filter(l => l.status === 'active').length;
+    document.getElementById('statRent').textContent = formatMoney(
+        leases.filter(l => l.status === 'active').reduce((s, l) => s + Number(l.monthly_rent), 0)
+    );
+
+    const tbody = document.getElementById('tableBody');
+    const empty = document.getElementById('emptyState');
+
+    if (!filtered.length) {
+        tbody.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+    }
+
+    empty.style.display = 'none';
+    tbody.innerHTML = filtered.map(l => `
+        <tr>
+            <td><strong>${escapeHtml(l.tenant_name)}</strong></td>
+            <td>${escapeHtml(l.room_number)}</td>
+            <td>${escapeHtml(l.apartment_name)}</td>
+            <td>${l.start_date}</td>
+            <td>${l.end_date || '—'}</td>
+            <td>${formatMoney(l.monthly_rent)}</td>
+            <td><span class="badge ${l.status}">${l.status}</span></td>
+            <td class="actions">
+                <a class="btn btn-secondary btn-sm" href="payments.html?lease_id=${l.id}">Payments</a>
+                ${can('leases.update') ? `<button class="btn btn-secondary btn-sm" onclick="editLease(${l.id})">Edit</button>` : ''}
+                ${can('leases.delete') ? `<button class="btn btn-danger btn-sm" onclick="deleteLease(${l.id})">Delete</button>` : ''}
+            </td>
+        </tr>
+    `).join('');
+}
+
+function resetForm() {
+    document.getElementById('leaseForm').reset();
+    document.getElementById('leaseId').value = '';
+    document.getElementById('monthly_rent').value = '0';
+    document.getElementById('deposit_amount').value = '0';
+    hideAlert(document.getElementById('modalAlert'));
+    if (presetTenantId) document.getElementById('tenant_id').value = presetTenantId;
+}
+
+async function openCreateModal() {
+    await loadOptions();
+    if (!tenants.length || !rooms.length) {
+        alert('Please add a tenant and at least one room before creating a lease.');
+        return;
+    }
+    resetForm();
+    document.getElementById('modalTitle').textContent = 'Add Lease';
+    openModal('leaseModal');
+}
+
+function editLease(id) {
+    const lease = leases.find(l => Number(l.id) === Number(id));
+    if (!lease) return;
+    resetForm();
+    document.getElementById('modalTitle').textContent = 'Edit Lease';
+    document.getElementById('leaseId').value = lease.id;
+    document.getElementById('tenant_id').value = lease.tenant_id;
+    const selectedRoom = rooms.find(r => Number(r.id) === Number(lease.room_id));
+    document.getElementById('apartment_id').value = selectedRoom ? selectedRoom.apartment_id : '';
+    populateRooms(lease.room_id);
+    document.getElementById('start_date').value = lease.start_date;
+    document.getElementById('end_date').value = lease.end_date || '';
+    document.getElementById('monthly_rent').value = lease.monthly_rent;
+    document.getElementById('deposit_amount').value = lease.deposit_amount;
+    document.getElementById('status').value = lease.status;
+    document.getElementById('notes').value = lease.notes || '';
+    openModal('leaseModal');
+}
+
+document.getElementById('room_id').addEventListener('change', function() {
+    const opt = this.options[this.selectedIndex];
+    if (opt && opt.dataset.rent) {
+        document.getElementById('monthly_rent').value = opt.dataset.rent;
+    }
+});
+document.getElementById('apartment_id').addEventListener('change', () => { populateRooms(); fillApartmentDeposit(); });
+
+async function saveLease() {
+    const alertEl = document.getElementById('modalAlert');
+    hideAlert(alertEl);
+
+    const id = document.getElementById('leaseId').value;
+    const payload = {
+        tenant_id: Number(document.getElementById('tenant_id').value),
+        room_id: Number(document.getElementById('room_id').value),
+        start_date: document.getElementById('start_date').value,
+        end_date: document.getElementById('end_date').value,
+        monthly_rent: document.getElementById('monthly_rent').value,
+        deposit_amount: document.getElementById('deposit_amount').value,
+        status: document.getElementById('status').value,
+        notes: document.getElementById('notes').value.trim(),
+    };
+
+    if (!payload.tenant_id || !payload.room_id || !payload.start_date) {
+        showAlert(alertEl, 'Tenant, room, and start date are required.', 'error');
+        return;
+    }
+
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+
+    try {
+        const data = id
+            ? await apiRequest('api/leases.php', { method: 'PUT', body: JSON.stringify({ id: Number(id), ...payload }) })
+            : await apiRequest('api/leases.php', { method: 'POST', body: JSON.stringify(payload) });
+
+        if (!data.success) {
+            showAlert(alertEl, data.message, 'error');
+            return;
+        }
+
+        closeModal('leaseModal');
+        await loadLeases();
+        await loadOptions();
+    } catch (e) {
+        showAlert(alertEl, 'Unable to save lease.', 'error');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+async function deleteLease(id) {
+    if (!confirm('Delete this lease?')) return;
+    const data = await apiRequest(`api/leases.php?id=${id}`, { method: 'DELETE' });
+    if (!data.success) {
+        alert(data.message);
+        return;
+    }
+    await loadLeases();
+    await loadOptions();
+}
+
+document.getElementById('addBtn').addEventListener('click', openCreateModal);
+document.getElementById('saveBtn').addEventListener('click', saveLease);
+document.getElementById('searchInput').addEventListener('input', renderTable);
+document.getElementById('statusFilter').addEventListener('change', loadLeases);
+document.querySelectorAll('[data-close]').forEach(btn => {
+    btn.addEventListener('click', () => closeModal(btn.dataset.close));
+});
+
+Promise.all([loadOptions(), loadLeases()]).catch(() => alert('Failed to load leases.'));
+</script>
+
+</body>
+</html>

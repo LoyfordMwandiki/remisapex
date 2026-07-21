@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RentSys Pro — Rooms</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+<link rel="stylesheet" href="assets/css/app.css"/>
+</head>
+<body data-page-perm="rooms.view">
+
+<div class="sidebar" id="sidebar">
+<div class="logo"><i class="fa-solid fa-building"></i><span>RentSys Pro</span></div>
+<div class="menu">
+<a href="dashboard.html" data-perm="dashboard.view"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a>
+<a href="apartments.html" data-perm="apartments.view"><i class="fa-solid fa-building-user"></i><span>Apartments</span></a>
+<a href="rooms.html" class="active" data-perm="rooms.view"><i class="fa-solid fa-door-open"></i><span>Rooms</span></a>
+<a href="tenants.html" data-perm="tenants.view"><i class="fa-solid fa-users"></i><span>Tenants</span></a>
+<a href="leases.html" data-perm="leases.view"><i class="fa-solid fa-file-contract"></i><span>Leases</span></a>
+<a href="payments.html" data-perm="payments.view"><i class="fa-solid fa-money-bill-wave"></i><span>Payments</span></a>
+<a href="rent_deposits.html" data-perm="rent_deposits.view"><i class="fa-solid fa-hand-holding-dollar"></i><span>Rent Deposits</span></a>
+<a href="maintenance.html" data-perm="maintenance.view"><i class="fa-solid fa-screwdriver-wrench"></i><span>Maintenance</span></a>
+<a href="reports.html" data-perm="reports.view"><i class="fa-solid fa-chart-column"></i><span>Reports</span></a>
+<a href="users.html" data-perm="users.view"><i class="fa-solid fa-user-shield"></i><span>Users</span></a>
+<a href="settings.html" data-perm="settings.view"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+</div>
+<div class="sidebar-footer">
+<a href="#" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+</div>
+</div>
+
+<div class="topbar" id="topbar">
+<div class="left">
+<div class="toggle" id="toggle"><i class="fa-solid fa-bars"></i></div>
+<div class="search"><i class="fa fa-search"></i><input type="text" id="searchInput" placeholder="Search rooms..."></div>
+</div>
+<div class="right">
+<i class="fa-regular fa-bell"></i>
+<button type="button" class="logout-btn" title="Logout"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></button>
+<div class="profile">
+<div class="avatar" id="avatarLetter">A</div>
+<div><strong id="userName">Administrator</strong><br><small id="userRole">Super Admin</small></div>
+</div>
+</div>
+</div>
+
+<div class="content" id="content">
+<div class="page-title">Rooms</div>
+<div class="breadcrumb">Home / Rooms</div>
+
+<div class="stats-row">
+<div class="stat-mini"><h3 id="statTotal">0</h3><p>Total Rooms</p></div>
+<div class="stat-mini"><h3 id="statAvailable">0</h3><p>Available</p></div>
+<div class="stat-mini"><h3 id="statOccupied">0</h3><p>Occupied</p></div>
+</div>
+
+<div class="toolbar">
+<div class="toolbar-left">
+<select class="filter-select" id="apartmentFilter">
+<option value="">All Apartments</option>
+</select>
+<select class="filter-select" id="statusFilter">
+<option value="">All Statuses</option>
+<option value="available">Available</option>
+<option value="occupied">Occupied</option>
+<option value="maintenance">Maintenance</option>
+</select>
+</div>
+<div class="toolbar-right">
+<button class="btn btn-primary" id="addBtn" data-perm="rooms.create"><i class="fa-solid fa-plus"></i> Add Room</button>
+</div>
+</div>
+
+<div class="panel">
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Room No.</th>
+<th>Apartment</th>
+<th>Floor</th>
+<th>Rent</th>
+<th>Bed/Bath</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+</div>
+<div class="empty-state" id="emptyState" style="display:none">
+<i class="fa-solid fa-door-open"></i>
+<p>No rooms found. Add rooms to your apartments.</p>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="roomModal">
+<div class="modal">
+<div class="modal-header">
+<h3 id="modalTitle">Add Room</h3>
+<button class="modal-close" data-close="roomModal">&times;</button>
+</div>
+<div class="modal-body">
+<div class="alert" id="modalAlert"></div>
+<form id="roomForm">
+<input type="hidden" id="roomId">
+<div class="form-grid">
+<div class="form-group full">
+<label for="apartment_id">Apartment *</label>
+<select class="form-control" id="apartment_id" required></select>
+</div>
+<div class="form-group">
+<label for="room_number">Room Number *</label>
+<input class="form-control" type="text" id="room_number" required placeholder="A-01">
+</div>
+<div class="form-group">
+<label for="floor">Floor</label>
+<input class="form-control" type="number" id="floor" min="1" value="1">
+</div>
+<div class="form-group">
+<label for="rent_amount">Monthly Rent (KES)</label>
+<input class="form-control" type="number" id="rent_amount" min="0" step="0.01" value="0">
+</div>
+<div class="form-group">
+<label for="bedrooms">Bedrooms</label>
+<input class="form-control" type="number" id="bedrooms" min="0" value="1">
+</div>
+<div class="form-group">
+<label for="bathrooms">Bathrooms</label>
+<input class="form-control" type="number" id="bathrooms" min="0" value="1">
+</div>
+<div class="form-group">
+<label for="status">Status</label>
+<select class="form-control" id="status">
+<option value="available">Available</option>
+<option value="occupied">Occupied</option>
+<option value="maintenance">Maintenance</option>
+</select>
+</div>
+<div class="form-group">
+<label for="listed_date">Listed Date</label>
+<input class="form-control" type="date" id="listed_date">
+</div>
+<div class="form-group full">
+<label for="description">Description</label>
+<textarea class="form-control" id="description" placeholder="Optional room notes"></textarea>
+</div>
+</div>
+</form>
+</div>
+<div class="modal-footer">
+<button class="btn btn-secondary" data-close="roomModal">Cancel</button>
+<button class="btn btn-primary" id="saveBtn">Save Room</button>
+</div>
+</div>
+</div>
+
+<script src="assets/js/app.js"></script>
+<script>
+let rooms = [];
+let apartments = [];
+
+const params = new URLSearchParams(window.location.search);
+const presetApartmentId = params.get('apartment_id') || '';
+
+async function loadApartments() {
+    const data = await apiRequest('api/apartments.php');
+    if (!data.success) throw new Error(data.message);
+    apartments = data.apartments || [];
+
+    const filter = document.getElementById('apartmentFilter');
+    const select = document.getElementById('apartment_id');
+
+    const options = apartments.map(a =>
+        `<option value="${a.id}">${escapeHtml(a.name)}</option>`
+    ).join('');
+
+    filter.innerHTML = '<option value="">All Apartments</option>' + options;
+    select.innerHTML = '<option value="">Select apartment</option>' + options;
+
+    if (presetApartmentId) {
+        filter.value = presetApartmentId;
+    }
+}
+
+async function loadRooms() {
+    const apartmentId = document.getElementById('apartmentFilter').value;
+    const url = apartmentId ? `api/rooms.php?apartment_id=${apartmentId}` : 'api/rooms.php';
+    const data = await apiRequest(url);
+    if (!data.success) throw new Error(data.message);
+    rooms = data.rooms || [];
+    renderTable();
+}
+
+function renderTable() {
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const status = document.getElementById('statusFilter').value;
+
+    const filtered = rooms.filter(r => {
+        const matchesQuery =
+            r.room_number.toLowerCase().includes(query) ||
+            (r.apartment_name || '').toLowerCase().includes(query);
+        const matchesStatus = !status || r.status === status;
+        return matchesQuery && matchesStatus;
+    });
+
+    const tbody = document.getElementById('tableBody');
+    const empty = document.getElementById('emptyState');
+
+    document.getElementById('statTotal').textContent = rooms.length;
+    document.getElementById('statAvailable').textContent = rooms.filter(r => r.status === 'available').length;
+    document.getElementById('statOccupied').textContent = rooms.filter(r => r.status === 'occupied').length;
+
+    if (!filtered.length) {
+        tbody.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+    }
+
+    empty.style.display = 'none';
+    tbody.innerHTML = filtered.map(r => `
+        <tr>
+            <td><strong>${escapeHtml(r.room_number)}</strong></td>
+            <td>${escapeHtml(r.apartment_name)}</td>
+            <td>${r.floor}</td>
+            <td>${formatMoney(r.rent_amount)}</td>
+            <td>${r.bedrooms} / ${r.bathrooms}</td>
+            <td><span class="badge ${r.status}">${r.status}</span></td>
+            <td class="actions">
+                ${can('rooms.update') ? `<button class="btn btn-secondary btn-sm" onclick="editRoom(${r.id})">Edit</button>` : ''}
+                ${can('rooms.delete') ? `<button class="btn btn-danger btn-sm" onclick="deleteRoom(${r.id}, '${escapeHtml(r.room_number).replace(/'/g, "\\'")}')">Delete</button>` : ''}
+            </td>
+        </tr>
+    `).join('');
+}
+
+function resetForm() {
+    document.getElementById('roomForm').reset();
+    document.getElementById('roomId').value = '';
+    document.getElementById('floor').value = '1';
+    document.getElementById('bedrooms').value = '1';
+    document.getElementById('bathrooms').value = '1';
+    document.getElementById('rent_amount').value = '0';
+    initDateInput(document.getElementById('listed_date'), { defaultToday: true });
+    hideAlert(document.getElementById('modalAlert'));
+
+    const filterVal = document.getElementById('apartmentFilter').value;
+    if (filterVal) {
+        document.getElementById('apartment_id').value = filterVal;
+    }
+}
+
+function openCreateModal() {
+    if (!apartments.length) {
+        alert('Please add an apartment first.');
+        window.location.href = 'apartments.html';
+        return;
+    }
+    resetForm();
+    document.getElementById('modalTitle').textContent = 'Add Room';
+    openModal('roomModal');
+}
+
+function editRoom(id) {
+    const room = rooms.find(r => Number(r.id) === Number(id));
+    if (!room) return;
+    resetForm();
+    document.getElementById('modalTitle').textContent = 'Edit Room';
+    document.getElementById('roomId').value = room.id;
+    document.getElementById('apartment_id').value = room.apartment_id;
+    document.getElementById('room_number').value = room.room_number;
+    document.getElementById('floor').value = room.floor;
+    document.getElementById('rent_amount').value = room.rent_amount;
+    document.getElementById('bedrooms').value = room.bedrooms;
+    document.getElementById('bathrooms').value = room.bathrooms;
+    document.getElementById('status').value = room.status;
+    document.getElementById('description').value = room.description || '';
+    document.getElementById('listed_date').value = room.listed_date || '';
+    openModal('roomModal');
+}
+
+async function saveRoom() {
+    const alertEl = document.getElementById('modalAlert');
+    hideAlert(alertEl);
+
+    const id = document.getElementById('roomId').value;
+    const payload = {
+        apartment_id: Number(document.getElementById('apartment_id').value),
+        room_number: document.getElementById('room_number').value.trim(),
+        floor: document.getElementById('floor').value,
+        rent_amount: document.getElementById('rent_amount').value,
+        bedrooms: document.getElementById('bedrooms').value,
+        bathrooms: document.getElementById('bathrooms').value,
+        status: document.getElementById('status').value,
+        description: document.getElementById('description').value.trim(),
+        listed_date: document.getElementById('listed_date').value,
+    };
+
+    if (!payload.apartment_id || !payload.room_number) {
+        showAlert(alertEl, 'Apartment and room number are required.', 'error');
+        return;
+    }
+
+    const dateError = validateNotFutureDate(payload.listed_date, 'Listed date');
+    if (dateError) {
+        showAlert(alertEl, dateError, 'error');
+        return;
+    }
+
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+
+    try {
+        const data = id
+            ? await apiRequest('api/rooms.php', { method: 'PUT', body: JSON.stringify({ id: Number(id), ...payload }) })
+            : await apiRequest('api/rooms.php', { method: 'POST', body: JSON.stringify(payload) });
+
+        if (!data.success) {
+            showAlert(alertEl, data.message, 'error');
+            return;
+        }
+
+        closeModal('roomModal');
+        await loadRooms();
+    } catch (e) {
+        showAlert(alertEl, 'Unable to save room.', 'error');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+async function deleteRoom(id, roomNumber) {
+    if (!confirm(`Delete room "${roomNumber}"?`)) return;
+    const data = await apiRequest(`api/rooms.php?id=${id}`, { method: 'DELETE' });
+    if (!data.success) {
+        alert(data.message);
+        return;
+    }
+    await loadRooms();
+}
+
+document.getElementById('addBtn').addEventListener('click', openCreateModal);
+document.getElementById('saveBtn').addEventListener('click', saveRoom);
+document.getElementById('searchInput').addEventListener('input', renderTable);
+document.getElementById('statusFilter').addEventListener('change', renderTable);
+document.getElementById('apartmentFilter').addEventListener('change', loadRooms);
+
+document.querySelectorAll('[data-close]').forEach(btn => {
+    btn.addEventListener('click', () => closeModal(btn.dataset.close));
+});
+
+Promise.all([loadApartments(), loadRooms()]).catch(() => alert('Failed to load rooms.'));
+</script>
+
+</body>
+</html>

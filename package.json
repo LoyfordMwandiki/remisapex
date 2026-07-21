@@ -1,0 +1,13 @@
+{
+  "name": "remis-netlify",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/prepare-static-site.mjs"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "jose": "^6.0.10",
+    "mysql2": "^3.14.1"
+  }
+}

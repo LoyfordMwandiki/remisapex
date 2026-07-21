@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RentSys Pro — Rent Deposits</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+<link rel="stylesheet" href="assets/css/app.css"/>
+</head>
+<body data-page-perm="rent_deposits.view">
+<div class="sidebar" id="sidebar">
+<div class="logo"><i class="fa-solid fa-building"></i><span>RentSys Pro</span></div>
+<div class="menu">
+<a href="dashboard.html" data-perm="dashboard.view"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a>
+<a href="apartments.html" data-perm="apartments.view"><i class="fa-solid fa-building-user"></i><span>Apartments</span></a>
+<a href="rooms.html" data-perm="rooms.view"><i class="fa-solid fa-door-open"></i><span>Rooms</span></a>
+<a href="tenants.html" data-perm="tenants.view"><i class="fa-solid fa-users"></i><span>Tenants</span></a>
+<a href="leases.html" data-perm="leases.view"><i class="fa-solid fa-file-contract"></i><span>Leases</span></a>
+<a href="payments.html" data-perm="payments.view"><i class="fa-solid fa-money-bill-wave"></i><span>Payments</span></a>
+<a href="rent_deposits.html" class="active" data-perm="rent_deposits.view"><i class="fa-solid fa-hand-holding-dollar"></i><span>Rent Deposits</span></a>
+<a href="maintenance.html" data-perm="maintenance.view"><i class="fa-solid fa-screwdriver-wrench"></i><span>Maintenance</span></a>
+<a href="reports.html" data-perm="reports.view"><i class="fa-solid fa-chart-column"></i><span>Reports</span></a>
+<a href="users.html" data-perm="users.view"><i class="fa-solid fa-user-shield"></i><span>Users</span></a>
+<a href="settings.html" data-perm="settings.view"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+</div>
+<div class="sidebar-footer"><a href="#" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a></div>
+</div>
+<div class="topbar" id="topbar"><div class="left"><div class="toggle" id="toggle"><i class="fa-solid fa-bars"></i></div><div class="search"><i class="fa fa-search"></i><input type="text" id="searchInput" placeholder="Search deposits..."></div></div><div class="right"><button type="button" class="logout-btn" title="Logout"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></button><div class="profile"><div class="avatar" id="avatarLetter">A</div><div><strong id="userName">Administrator</strong><br><small id="userRole">Super Admin</small></div></div></div></div>
+<div class="content" id="content">
+<div class="page-title">Rent Deposits</div><div class="breadcrumb">Home / Rent Deposits</div>
+<div class="stats-row"><div class="stat-mini"><h3 id="statRecorded">KES 0</h3><p>Deposits Recorded</p></div><div class="stat-mini"><h3 id="statRequired">KES 0</h3><p>Required Deposits</p></div><div class="stat-mini"><h3 id="statBalance">KES 0</h3><p>Outstanding Balance</p></div></div>
+<div class="toolbar"><div class="toolbar-left"></div><div class="toolbar-right"><button class="btn btn-primary" id="addBtn" data-perm="rent_deposits.create"><i class="fa-solid fa-plus"></i> Record Deposit</button></div></div>
+<div class="panel"><div class="table-wrap"><table><thead><tr><th>Tenant</th><th>Apartment</th><th>Room</th><th>Amount Paid</th><th>Date Paid</th><th>Method</th><th>Deposit Balance</th><th>Actions</th></tr></thead><tbody id="tableBody"></tbody></table></div><div class="empty-state" id="emptyState" style="display:none"><i class="fa-solid fa-hand-holding-dollar"></i><p>No rent deposits recorded yet.</p></div></div>
+</div>
+<div class="modal-overlay" id="depositModal"><div class="modal"><div class="modal-header"><h3 id="modalTitle">Record Rent Deposit</h3><button class="modal-close" data-close="depositModal">&times;</button></div><div class="modal-body"><div class="alert" id="modalAlert"></div><form id="depositForm"><input type="hidden" id="depositId"><div class="form-grid"><div class="form-group"><label for="tenant_id">Tenant *</label><select class="form-control" id="tenant_id" required></select></div><div class="form-group"><label for="apartment_id">Apartment *</label><select class="form-control" id="apartment_id" required></select></div><div class="form-group"><label for="room_id">Room *</label><select class="form-control" id="room_id" required></select></div><div class="form-group"><label for="amount_paid">Rent Deposit Paid (KES) *</label><input class="form-control" type="number" id="amount_paid" min="0.01" step="0.01" required></div><div class="form-group"><label for="date_paid">Date Paid *</label><input class="form-control" type="date" id="date_paid" required></div><div class="form-group"><label for="payment_method">Method</label><select class="form-control" id="payment_method"><option value="cash">Cash</option><option value="mpesa">M-Pesa</option><option value="bank">Bank Transfer</option><option value="card">Card</option></select></div><div class="form-group full"><label for="reference_number">Reference No.</label><input class="form-control" type="text" id="reference_number"></div><div class="form-group full"><label for="notes">Notes</label><textarea class="form-control" id="notes"></textarea></div></div></form></div><div class="modal-footer"><button class="btn btn-secondary" data-close="depositModal">Cancel</button><button class="btn btn-primary" id="saveBtn">Save Deposit</button></div></div></div>
+<script src="assets/js/app.js"></script>
+<script>
+let deposits = [], tenants = [], apartments = [], rooms = [], leases = [];
+async function loadLookups() {
+    const [tenantData, apartmentData, roomData, leaseData] = await Promise.all([apiRequest('api/tenants.php'), apiRequest('api/apartments.php'), apiRequest('api/rooms.php'), apiRequest('api/leases.php')]);
+    tenants = tenantData.tenants || []; apartments = apartmentData.apartments || []; rooms = roomData.rooms || []; leases = leaseData.leases || [];
+    document.getElementById('tenant_id').innerHTML = '<option value="">Select tenant</option>' + tenants.filter(t => Number(t.is_active)).map(t => `<option value="${t.id}">${escapeHtml(t.full_name)}</option>`).join('');
+    document.getElementById('apartment_id').innerHTML = '<option value="">Select apartment</option>' + apartments.map(a => `<option value="${a.id}">${escapeHtml(a.name)}</option>`).join('');
+    populateRooms();
+}
+function populateRooms(selectedId = '') {
+    const apartmentId = document.getElementById('apartment_id').value;
+    const eligible = rooms.filter(r => !apartmentId || Number(r.apartment_id) === Number(apartmentId));
+    document.getElementById('room_id').innerHTML = '<option value="">Select room</option>' + eligible.map(r => `<option value="${r.id}">${escapeHtml(r.room_number)} (${escapeHtml(r.status)})</option>`).join('');
+    if (selectedId) document.getElementById('room_id').value = selectedId;
+}
+function selectTenantLease() {
+    const tenantId = Number(document.getElementById('tenant_id').value);
+    const activeLease = leases.find(l => Number(l.tenant_id) === tenantId && l.status === 'active');
+    if (!activeLease) {
+        document.getElementById('apartment_id').value = '';
+        populateRooms();
+        return;
+    }
+    const leasedRoom = rooms.find(r => Number(r.id) === Number(activeLease.room_id));
+    if (!leasedRoom) return;
+    document.getElementById('apartment_id').value = leasedRoom.apartment_id;
+    populateRooms(activeLease.room_id);
+    const alreadyPaid = deposits.filter(d => Number(d.lease_id) === Number(activeLease.id)).reduce((sum, d) => sum + Number(d.amount_paid), 0);
+    document.getElementById('amount_paid').value = Math.max(Number(activeLease.deposit_amount) - alreadyPaid, 0);
+}
+async function loadDeposits() { const data = await apiRequest('api/rent_deposits.php'); if (!data.success) throw new Error(data.message); deposits = data.deposits || []; renderTable(); }
+function renderTable() {
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    const filtered = deposits.filter(d => d.tenant_name.toLowerCase().includes(q) || d.apartment_name.toLowerCase().includes(q) || d.room_number.toLowerCase().includes(q));
+    const byLease = new Map(); deposits.forEach(d => byLease.set(d.lease_id, d));
+    const totalRequired = [...byLease.values()].reduce((sum, d) => sum + Number(d.deposit_amount), 0);
+    const totalPaid = [...byLease.values()].reduce((sum, d) => sum + Number(d.total_deposit_paid), 0);
+    document.getElementById('statRecorded').textContent = formatMoney(totalPaid); document.getElementById('statRequired').textContent = formatMoney(totalRequired); document.getElementById('statBalance').textContent = formatMoney(Math.max(totalRequired - totalPaid, 0));
+    document.getElementById('emptyState').style.display = filtered.length ? 'none' : 'block';
+    document.getElementById('tableBody').innerHTML = filtered.map(d => `<tr><td><strong>${escapeHtml(d.tenant_name)}</strong></td><td>${escapeHtml(d.apartment_name)}</td><td>${escapeHtml(d.room_number)}</td><td>${formatMoney(d.amount_paid)}</td><td>${d.date_paid}</td><td>${escapeHtml(d.payment_method)}</td><td>${formatMoney(Math.max(Number(d.deposit_amount) - Number(d.total_deposit_paid), 0))}</td><td class="actions">${can('rent_deposits.update') ? `<button class="btn btn-secondary btn-sm" onclick="editDeposit(${d.id})">Edit</button>` : ''}${can('rent_deposits.delete') ? `<button class="btn btn-danger btn-sm" onclick="deleteDeposit(${d.id})">Delete</button>` : ''}</td></tr>`).join('');
+}
+function resetForm() { document.getElementById('depositForm').reset(); document.getElementById('depositId').value = ''; initDateInput(document.getElementById('date_paid'), {defaultToday:true}); populateRooms(); hideAlert(document.getElementById('modalAlert')); }
+function openCreateModal() { resetForm(); document.getElementById('modalTitle').textContent = 'Record Rent Deposit'; openModal('depositModal'); }
+function editDeposit(id) { const d = deposits.find(x => Number(x.id) === Number(id)); if (!d) return; resetForm(); document.getElementById('modalTitle').textContent = 'Edit Rent Deposit'; document.getElementById('depositId').value = d.id; document.getElementById('tenant_id').value = d.tenant_id; document.getElementById('apartment_id').value = d.apartment_id; populateRooms(d.room_id); document.getElementById('amount_paid').value = d.amount_paid; document.getElementById('date_paid').value = d.date_paid; document.getElementById('payment_method').value = d.payment_method; document.getElementById('reference_number').value = d.reference_number || ''; document.getElementById('notes').value = d.notes || ''; openModal('depositModal'); }
+async function saveDeposit() { const alertEl = document.getElementById('modalAlert'), id = document.getElementById('depositId').value; hideAlert(alertEl); const payload = {tenant_id:Number(document.getElementById('tenant_id').value), apartment_id:Number(document.getElementById('apartment_id').value), room_id:Number(document.getElementById('room_id').value), amount_paid:document.getElementById('amount_paid').value, date_paid:document.getElementById('date_paid').value, payment_method:document.getElementById('payment_method').value, reference_number:document.getElementById('reference_number').value.trim(), notes:document.getElementById('notes').value.trim()}; if (!payload.tenant_id || !payload.apartment_id || !payload.room_id || Number(payload.amount_paid) <= 0 || !payload.date_paid) { showAlert(alertEl, 'Tenant, apartment, room, amount paid, and date paid are required.', 'error'); return; } const dateError = validateNotFutureDate(payload.date_paid, 'Date paid'); if (dateError) { showAlert(alertEl, dateError, 'error'); return; } try { const data = id ? await apiRequest('api/rent_deposits.php', {method:'PUT', body:JSON.stringify({id:Number(id), ...payload})}) : await apiRequest('api/rent_deposits.php', {method:'POST', body:JSON.stringify(payload)}); if (!data.success) { showAlert(alertEl, data.message, 'error'); return; } closeModal('depositModal'); await loadDeposits(); } catch(e) { showAlert(alertEl, 'Unable to save rent deposit.', 'error'); } }
+async function deleteDeposit(id) { if (!confirm('Delete this rent deposit record?')) return; const data = await apiRequest(`api/rent_deposits.php?id=${id}`, {method:'DELETE'}); if (!data.success) return alert(data.message); await loadDeposits(); }
+document.getElementById('addBtn').addEventListener('click', openCreateModal); document.getElementById('saveBtn').addEventListener('click', saveDeposit); document.getElementById('searchInput').addEventListener('input', renderTable); document.getElementById('tenant_id').addEventListener('change', selectTenantLease); document.getElementById('apartment_id').addEventListener('change', () => populateRooms()); document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => closeModal(b.dataset.close))); Promise.all([loadLookups(), loadDeposits()]).catch(() => alert('Failed to load rent deposits.'));
+</script>
+</body>
+</html>

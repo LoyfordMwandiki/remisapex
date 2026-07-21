@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RentSys Pro — Reports</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+<link rel="stylesheet" href="assets/css/app.css"/>
+</head>
+<body data-page-perm="reports.view">
+
+<div class="sidebar" id="sidebar">
+<div class="logo"><i class="fa-solid fa-building"></i><span>RentSys Pro</span></div>
+<div class="menu">
+<a href="dashboard.html" data-perm="dashboard.view"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a>
+<a href="apartments.html" data-perm="apartments.view"><i class="fa-solid fa-building-user"></i><span>Apartments</span></a>
+<a href="rooms.html" data-perm="rooms.view"><i class="fa-solid fa-door-open"></i><span>Rooms</span></a>
+<a href="tenants.html" data-perm="tenants.view"><i class="fa-solid fa-users"></i><span>Tenants</span></a>
+<a href="leases.html" data-perm="leases.view"><i class="fa-solid fa-file-contract"></i><span>Leases</span></a>
+<a href="payments.html" data-perm="payments.view"><i class="fa-solid fa-money-bill-wave"></i><span>Payments</span></a>
+<a href="rent_deposits.html" data-perm="rent_deposits.view"><i class="fa-solid fa-hand-holding-dollar"></i><span>Rent Deposits</span></a>
+<a href="maintenance.html" data-perm="maintenance.view"><i class="fa-solid fa-screwdriver-wrench"></i><span>Maintenance</span></a>
+<a href="reports.html" class="active" data-perm="reports.view"><i class="fa-solid fa-chart-column"></i><span>Reports</span></a>
+<a href="users.html" data-perm="users.view"><i class="fa-solid fa-user-shield"></i><span>Users</span></a>
+<a href="settings.html" data-perm="settings.view"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+</div>
+<div class="sidebar-footer">
+<a href="#" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+</div>
+</div>
+
+<div class="topbar" id="topbar">
+<div class="left">
+<div class="toggle" id="toggle"><i class="fa-solid fa-bars"></i></div>
+</div>
+<div class="right">
+<button type="button" class="logout-btn" title="Logout"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></button>
+<div class="profile">
+<div class="avatar" id="avatarLetter">A</div>
+<div><strong id="userName">Administrator</strong><br><small id="userRole">Super Admin</small></div>
+</div>
+</div>
+</div>
+
+<div class="content" id="content">
+<div class="page-title">Reports</div>
+<div class="breadcrumb">Home / Reports</div>
+
+<div class="report-grid" data-perm="reports.generate">
+<div class="panel">
+<div class="panel-header" style="margin-bottom:18px"><h4 style="font-size:17px">Custom Report</h4></div>
+<div class="form-grid">
+<div class="form-group"><label for="reportEntity">Entity</label><select class="form-control" id="reportEntity"><option value="apartments">Apartments</option><option value="rooms">Rooms</option><option value="tenants">Tenants</option><option value="leases">Leases</option><option value="payments" selected>Payments</option><option value="maintenance">Maintenance</option></select></div>
+<div class="form-group"><label for="reportPeriod">Period</label><select class="form-control" id="reportPeriod"><option value="daily">Today</option><option value="weekly">Last 7 days</option><option value="monthly" selected>This month</option><option value="quarterly">This quarter</option><option value="yearly">This year</option></select></div>
+<div class="form-group"><label for="reportFrom">From</label><input class="form-control" type="date" id="reportFrom"></div>
+<div class="form-group"><label for="reportTo">To</label><input class="form-control" type="date" id="reportTo"></div>
+</div>
+<div style="display:flex;gap:10px;margin-top:16px"><button class="btn btn-primary" id="generateReport">Generate</button><button class="btn btn-secondary" id="downloadReport">Download CSV</button></div>
+<div class="alert" id="customReportAlert"></div>
+<div class="table-wrap" style="margin-top:18px"><table><thead id="customReportHead"></thead><tbody id="customReportBody"><tr><td style="color:#888">Choose options and generate a report.</td></tr></tbody></table></div>
+</div>
+<div class="panel">
+<div class="panel-header" style="margin-bottom:18px"><h4 style="font-size:17px">Periodic Reports</h4></div>
+<div class="form-grid"><div class="form-group"><label for="scheduleName">Report name</label><input class="form-control" id="scheduleName" placeholder="Monthly payment summary"></div><div class="form-group"><label for="schedulePeriod">Frequency</label><select class="form-control" id="schedulePeriod"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly" selected>Monthly</option><option value="quarterly">Quarterly</option><option value="yearly">Yearly</option></select></div></div>
+<button class="btn btn-primary" id="saveSchedule" style="margin-top:16px">Save periodic report</button>
+<div class="table-wrap" style="margin-top:18px"><table><thead><tr><th>Name</th><th>Entity</th><th>Frequency</th><th></th></tr></thead><tbody id="schedulesBody"><tr><td colspan="4" style="color:#888">Loading schedules…</td></tr></tbody></table></div>
+</div>
+</div>
+
+<div class="stats-row" style="grid-template-columns:repeat(4,1fr)">
+<div class="stat-mini"><h3 id="statOccupancy">0%</h3><p>Occupancy Rate</p></div>
+<div class="stat-mini"><h3 id="statRent">KES 0</h3><p>Expected Monthly Rent</p></div>
+<div class="stat-mini"><h3 id="statCollected">KES 0</h3><p>Total Collected</p></div>
+<div class="stat-mini"><h3 id="statOutstanding">KES 0</h3><p>Outstanding</p></div>
+</div>
+
+<div class="report-grid">
+<div class="panel">
+<div class="panel-header" style="display:flex;justify-content:space-between;margin-bottom:18px">
+<h4 style="font-size:17px">Collections by Month</h4>
+</div>
+<div class="chart-bars" id="monthlyChart"></div>
+</div>
+<div class="panel">
+<div class="panel-header" style="display:flex;justify-content:space-between;margin-bottom:18px">
+<h4 style="font-size:17px">Occupancy by Apartment</h4>
+</div>
+<div class="occ-list" id="occupancyList"></div>
+</div>
+</div>
+
+<div class="report-grid">
+<div class="panel">
+<div class="panel-header" style="display:flex;justify-content:space-between;margin-bottom:18px">
+<h4 style="font-size:17px">Outstanding Payments</h4>
+<a href="payments.html" style="font-size:13px;color:#0d6efd;text-decoration:none">View all</a>
+</div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th>Tenant</th><th>Room</th><th>Amount</th><th>Date</th><th>Status</th></tr>
+</thead>
+<tbody id="outstandingBody"></tbody>
+</table>
+</div>
+</div>
+<div class="panel">
+<div class="panel-header" style="display:flex;justify-content:space-between;margin-bottom:18px">
+<h4 style="font-size:17px">Leases Expiring (90 days)</h4>
+<a href="leases.html" style="font-size:13px;color:#0d6efd;text-decoration:none">View all</a>
+</div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th>Tenant</th><th>Room</th><th>End Date</th><th>Rent</th></tr>
+</thead>
+<tbody id="expiringBody"></tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<div class="panel-header" style="display:flex;justify-content:space-between;margin-bottom:18px">
+<h4 style="font-size:17px">Quick Summary</h4>
+</div>
+<div class="stats-row" style="margin-bottom:0">
+<div class="stat-mini"><h3 id="sumApartments">0</h3><p>Apartments</p></div>
+<div class="stat-mini"><h3 id="sumRooms">0</h3><p>Rooms</p></div>
+<div class="stat-mini"><h3 id="sumTenants">0</h3><p>Active Tenants</p></div>
+<div class="stat-mini"><h3 id="sumMaintenance">0</h3><p>Open Maintenance</p></div>
+</div>
+</div>
+</div>
+
+<script src="assets/js/app.js"></script>
+<script>
+async function loadReports() {
+    const data = await apiRequest('api/reports.php');
+    if (!data.success) throw new Error(data.message);
+
+    const s = data.summary;
+    document.getElementById('statOccupancy').textContent = s.occupancy_rate + '%';
+    document.getElementById('statRent').textContent = formatMoney(s.monthly_rent_expected);
+    document.getElementById('statCollected').textContent = formatMoney(s.payments_paid);
+    document.getElementById('statOutstanding').textContent = formatMoney(Number(s.payments_pending) + Number(s.payments_overdue));
+    document.getElementById('sumApartments').textContent = s.apartments;
+    document.getElementById('sumRooms').textContent = s.rooms;
+    document.getElementById('sumTenants').textContent = s.tenants;
+    document.getElementById('sumMaintenance').textContent = s.open_maintenance;
+
+    const monthly = data.monthly_collections || [];
+    const maxPaid = Math.max(...monthly.map(m => Number(m.paid)), 1);
+    document.getElementById('monthlyChart').innerHTML = monthly.length
+        ? monthly.map(m => {
+            const h = Math.max(8, Math.round((Number(m.paid) / maxPaid) * 100));
+            const label = m.month.slice(5);
+            return `<div class="bar-col"><div class="bar" style="height:${h}%"></div><span>${label}</span></div>`;
+        }).join('')
+        : '<p style="color:#888">No payment data yet.</p>';
+
+    document.getElementById('occupancyList').innerHTML = (data.occupancy_by_apartment || []).map(a => {
+        const total = Number(a.total_rooms) || 0;
+        const occupied = Number(a.occupied_rooms) || 0;
+        const pct = total ? Math.round((occupied / total) * 100) : 0;
+        const color = pct >= 85 ? 'green' : pct >= 60 ? '' : pct >= 40 ? 'orange' : 'red';
+        return `<div class="occ-row">
+            <span>${escapeHtml(a.name)}</span>
+            <div class="track"><div class="fill ${color}" style="width:${pct}%"></div></div>
+            <span>${pct}%</span>
+        </div>`;
+    }).join('') || '<p style="color:#888">No apartments yet.</p>';
+
+    const outstanding = data.outstanding_payments || [];
+    document.getElementById('outstandingBody').innerHTML = outstanding.length
+        ? outstanding.map(p => `<tr>
+            <td>${escapeHtml(p.tenant_name)}</td>
+            <td>${escapeHtml(p.apartment_name)} ${escapeHtml(p.room_number)}</td>
+            <td>${formatMoney(p.amount)}</td>
+            <td>${p.payment_date}</td>
+            <td><span class="badge ${p.status}">${p.status}</span></td>
+        </tr>`).join('')
+        : '<tr><td colspan="5" style="text-align:center;color:#888">No outstanding payments</td></tr>';
+
+    const expiring = data.expiring_leases || [];
+    document.getElementById('expiringBody').innerHTML = expiring.length
+        ? expiring.map(l => `<tr>
+            <td>${escapeHtml(l.tenant_name)}</td>
+            <td>${escapeHtml(l.apartment_name)} ${escapeHtml(l.room_number)}</td>
+            <td>${l.end_date}</td>
+            <td>${formatMoney(l.monthly_rent)}</td>
+        </tr>`).join('')
+        : '<tr><td colspan="4" style="text-align:center;color:#888">No leases expiring soon</td></tr>';
+}
+
+loadReports().catch(() => alert('Failed to load reports.'));
+
+function reportQuery(format) {
+    const params = new URLSearchParams({
+        mode: 'custom',
+        entity: document.getElementById('reportEntity').value,
+        period: document.getElementById('reportPeriod').value,
+    });
+    const from = document.getElementById('reportFrom').value;
+    const to = document.getElementById('reportTo').value;
+    if (from) params.set('from', from);
+    if (to) params.set('to', to);
+    if (format) params.set('format', format);
+    return params;
+}
+
+function validateReportDates() {
+    const from = document.getElementById('reportFrom').value;
+    const to = document.getElementById('reportTo').value;
+    return validateNotFutureDate(from, 'Start date') || validateNotFutureDate(to, 'End date') || validateDateRange(from, to, 'Start date', 'End date');
+}
+
+async function generateCustomReport() {
+    const alertEl = document.getElementById('customReportAlert');
+    hideAlert(alertEl);
+    const dateError = validateReportDates();
+    if (dateError) return showAlert(alertEl, dateError, 'error');
+    try {
+        const data = await apiRequest('api/reports.php?' + reportQuery().toString());
+        if (!data.success) return showAlert(alertEl, data.message, 'error');
+        const rows = data.rows || [];
+        const headers = rows.length ? Object.keys(rows[0]) : [];
+        document.getElementById('customReportHead').innerHTML = headers.length ? '<tr>' + headers.map(h => `<th>${escapeHtml(h.replaceAll('_', ' '))}</th>`).join('') + '</tr>' : '';
+        document.getElementById('customReportBody').innerHTML = rows.length ? rows.map(row => '<tr>' + headers.map(h => `<td>${escapeHtml(String(row[h] ?? '—'))}</td>`).join('') + '</tr>').join('') : '<tr><td style="color:#888">No records found for this period.</td></tr>';
+        showAlert(alertEl, `${data.row_count} record(s) generated for ${data.from_date} to ${data.to_date}.`, 'success');
+    } catch (e) {
+        showAlert(alertEl, 'Unable to generate this report.', 'error');
+    }
+}
+
+async function loadSchedules() {
+    const body = document.getElementById('schedulesBody');
+    if (!body) return;
+    try {
+        const data = await apiRequest('api/reports.php?mode=schedules');
+        const rows = data.schedules || [];
+        body.innerHTML = rows.length ? rows.map(s => `<tr><td>${escapeHtml(s.name)}</td><td>${escapeHtml(s.entity)}</td><td>${escapeHtml(s.period)}</td><td><button class="btn btn-danger btn-sm" onclick="deleteSchedule(${s.id})">Delete</button></td></tr>`).join('') : '<tr><td colspan="4" style="color:#888">No periodic reports saved.</td></tr>';
+    } catch (e) { body.innerHTML = '<tr><td colspan="4" style="color:#888">Unable to load schedules.</td></tr>'; }
+}
+
+async function saveSchedule() {
+    const name = document.getElementById('scheduleName').value.trim();
+    if (!name) return alert('Enter a name for the periodic report.');
+    const data = await apiRequest('api/reports.php', { method: 'POST', body: JSON.stringify({ name, entity: document.getElementById('reportEntity').value, period: document.getElementById('schedulePeriod').value }) });
+    if (!data.success) return alert(data.message);
+    document.getElementById('scheduleName').value = '';
+    loadSchedules();
+}
+
+async function deleteSchedule(id) {
+    if (!confirm('Delete this periodic report?')) return;
+    const data = await apiRequest('api/reports.php?id=' + id, { method: 'DELETE' });
+    if (!data.success) return alert(data.message);
+    loadSchedules();
+}
+
+if (can('reports.generate')) {
+    initDateInput(document.getElementById('reportFrom'));
+    initDateInput(document.getElementById('reportTo'), { defaultToday: true });
+    document.getElementById('generateReport').addEventListener('click', generateCustomReport);
+    document.getElementById('downloadReport').addEventListener('click', () => {
+        const dateError = validateReportDates();
+        if (dateError) return showAlert(document.getElementById('customReportAlert'), dateError, 'error');
+        window.open(apiUrl('api/reports.php?' + reportQuery('csv').toString()), '_blank');
+    });
+    document.getElementById('saveSchedule').addEventListener('click', saveSchedule);
+    loadSchedules();
+}
+</script>
+</body>
+</html>

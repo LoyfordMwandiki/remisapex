@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RentSys Pro — Settings</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+<link rel="stylesheet" href="assets/css/app.css"/>
+</head>
+<body data-page-perm="settings.view">
+
+<div class="sidebar" id="sidebar">
+<div class="logo"><i class="fa-solid fa-building"></i><span>RentSys Pro</span></div>
+<div class="menu">
+<a href="dashboard.html" data-perm="dashboard.view"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a>
+<a href="apartments.html" data-perm="apartments.view"><i class="fa-solid fa-building-user"></i><span>Apartments</span></a>
+<a href="rooms.html" data-perm="rooms.view"><i class="fa-solid fa-door-open"></i><span>Rooms</span></a>
+<a href="tenants.html" data-perm="tenants.view"><i class="fa-solid fa-users"></i><span>Tenants</span></a>
+<a href="leases.html" data-perm="leases.view"><i class="fa-solid fa-file-contract"></i><span>Leases</span></a>
+<a href="payments.html" data-perm="payments.view"><i class="fa-solid fa-money-bill-wave"></i><span>Payments</span></a>
+<a href="rent_deposits.html" data-perm="rent_deposits.view"><i class="fa-solid fa-hand-holding-dollar"></i><span>Rent Deposits</span></a>
+<a href="maintenance.html" data-perm="maintenance.view"><i class="fa-solid fa-screwdriver-wrench"></i><span>Maintenance</span></a>
+<a href="reports.html" data-perm="reports.view"><i class="fa-solid fa-chart-column"></i><span>Reports</span></a>
+<a href="users.html" data-perm="users.view"><i class="fa-solid fa-user-shield"></i><span>Users</span></a>
+<a href="settings.html" class="active" data-perm="settings.view"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+</div>
+<div class="sidebar-footer">
+<a href="#" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+</div>
+</div>
+
+<div class="topbar" id="topbar">
+<div class="left">
+<div class="toggle" id="toggle"><i class="fa-solid fa-bars"></i></div>
+</div>
+<div class="right">
+<button type="button" class="logout-btn" title="Logout"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></button>
+<div class="profile">
+<div class="avatar" id="avatarLetter">A</div>
+<div><strong id="userName">Administrator</strong><br><small id="userRole">Super Admin</small></div>
+</div>
+</div>
+</div>
+
+<div class="content" id="content">
+<div class="page-title">Settings</div>
+<div class="breadcrumb">Home / Settings</div>
+
+<div class="alert" id="pageAlert"></div>
+
+<div class="panel settings-card">
+<h4>Company Profile</h4>
+<form id="settingsForm">
+<div class="form-grid">
+<div class="form-group">
+<label for="company_name">Company Name</label>
+<input class="form-control" type="text" id="company_name">
+</div>
+<div class="form-group">
+<label for="company_email">Email</label>
+<input class="form-control" type="email" id="company_email">
+</div>
+<div class="form-group">
+<label for="company_phone">Phone</label>
+<input class="form-control" type="text" id="company_phone">
+</div>
+<div class="form-group">
+<label for="company_address">Address</label>
+<input class="form-control" type="text" id="company_address">
+</div>
+</div>
+</form>
+</div>
+
+<div class="panel settings-card">
+<h4>Billing Preferences</h4>
+<div class="form-grid">
+<div class="form-group">
+<label for="currency">Currency Code</label>
+<input class="form-control" type="text" id="currency" placeholder="KES">
+</div>
+<div class="form-group">
+<label for="currency_symbol">Currency Symbol</label>
+<input class="form-control" type="text" id="currency_symbol" placeholder="KES">
+</div>
+<div class="form-group">
+<label for="rent_due_day">Rent Due Day (1–28)</label>
+<input class="form-control" type="number" id="rent_due_day" min="1" max="28" value="5">
+</div>
+<div class="form-group">
+<label for="late_fee_percent">Late Fee (%)</label>
+<input class="form-control" type="number" id="late_fee_percent" min="0" step="0.1" value="5">
+</div>
+</div>
+<button class="btn btn-primary" id="saveSettingsBtn" style="margin-top:8px">Save Settings</button>
+</div>
+
+<div class="panel settings-card">
+<h4>Change Password</h4>
+<div class="alert" id="passwordAlert"></div>
+<div class="form-grid">
+<div class="form-group full">
+<label for="current_password">Current Password</label>
+<input class="form-control" type="password" id="current_password">
+</div>
+<div class="form-group">
+<label for="new_password">New Password</label>
+<input class="form-control" type="password" id="new_password" minlength="6">
+</div>
+<div class="form-group">
+<label for="confirm_password">Confirm New Password</label>
+<input class="form-control" type="password" id="confirm_password" minlength="6">
+</div>
+</div>
+<button class="btn btn-primary" id="changePasswordBtn" style="margin-top:8px">Update Password</button>
+</div>
+</div>
+
+<script src="assets/js/app.js"></script>
+<script>
+let currentUser = null;
+
+try {
+    currentUser = JSON.parse(sessionStorage.getItem('rentsys_user') || 'null');
+} catch (e) {}
+
+async function loadSettings() {
+    const data = await apiRequest('api/settings.php');
+    if (!data.success) throw new Error(data.message);
+    const s = data.settings || {};
+    document.getElementById('company_name').value = s.company_name || '';
+    document.getElementById('company_email').value = s.company_email || '';
+    document.getElementById('company_phone').value = s.company_phone || '';
+    document.getElementById('company_address').value = s.company_address || '';
+    document.getElementById('currency').value = s.currency || 'KES';
+    document.getElementById('currency_symbol').value = s.currency_symbol || 'KES';
+    document.getElementById('rent_due_day').value = s.rent_due_day || '5';
+    document.getElementById('late_fee_percent').value = s.late_fee_percent || '5';
+}
+
+async function saveSettings() {
+    const alertEl = document.getElementById('pageAlert');
+    hideAlert(alertEl);
+
+    const settings = {
+        company_name: document.getElementById('company_name').value.trim(),
+        company_email: document.getElementById('company_email').value.trim(),
+        company_phone: document.getElementById('company_phone').value.trim(),
+        company_address: document.getElementById('company_address').value.trim(),
+        currency: document.getElementById('currency').value.trim(),
+        currency_symbol: document.getElementById('currency_symbol').value.trim(),
+        rent_due_day: document.getElementById('rent_due_day').value,
+        late_fee_percent: document.getElementById('late_fee_percent').value,
+    };
+
+    const btn = document.getElementById('saveSettingsBtn');
+    btn.disabled = true;
+
+    try {
+        const data = await apiRequest('api/settings.php', {
+            method: 'PUT',
+            body: JSON.stringify({ settings }),
+        });
+
+        if (!data.success) {
+            showAlert(alertEl, data.message, 'error');
+            return;
+        }
+
+        showAlert(alertEl, 'Settings saved successfully.', 'success');
+    } catch (e) {
+        showAlert(alertEl, 'Unable to save settings.', 'error');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+async function changePassword() {
+    const alertEl = document.getElementById('passwordAlert');
+    hideAlert(alertEl);
+
+    if (!currentUser || !currentUser.id) {
+        showAlert(alertEl, 'Please log in again to change your password.', 'error');
+        return;
+    }
+
+    const payload = {
+        action: 'change_password',
+        user_id: currentUser.id,
+        current_password: document.getElementById('current_password').value,
+        new_password: document.getElementById('new_password').value,
+        confirm_password: document.getElementById('confirm_password').value,
+    };
+
+    if (!payload.current_password || !payload.new_password) {
+        showAlert(alertEl, 'Fill in all password fields.', 'error');
+        return;
+    }
+
+    const btn = document.getElementById('changePasswordBtn');
+    btn.disabled = true;
+
+    try {
+        const data = await apiRequest('api/settings.php', {
+            method: 'POST',
+            body: JSON.stringify(payload),
+        });
+
+        if (!data.success) {
+            showAlert(alertEl, data.message, 'error');
+            return;
+        }
+
+        showAlert(alertEl, data.message, 'success');
+        document.getElementById('current_password').value = '';
+        document.getElementById('new_password').value = '';
+        document.getElementById('confirm_password').value = '';
+    } catch (e) {
+        showAlert(alertEl, 'Unable to update password.', 'error');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+document.getElementById('saveSettingsBtn').addEventListener('click', saveSettings);
+document.getElementById('changePasswordBtn').addEventListener('click', changePassword);
+
+loadSettings().catch(() => alert('Failed to load settings.'));
+</script>
+</body>
+</html>

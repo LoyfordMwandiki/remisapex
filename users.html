@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RentSys Pro — Users</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+<link rel="stylesheet" href="assets/css/app.css"/>
+</head>
+<body data-page-perm="users.view">
+
+<div class="sidebar" id="sidebar">
+<div class="logo"><i class="fa-solid fa-building"></i><span>RentSys Pro</span></div>
+<div class="menu">
+<a href="dashboard.html" data-perm="dashboard.view"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a>
+<a href="apartments.html" data-perm="apartments.view"><i class="fa-solid fa-building-user"></i><span>Apartments</span></a>
+<a href="rooms.html" data-perm="rooms.view"><i class="fa-solid fa-door-open"></i><span>Rooms</span></a>
+<a href="tenants.html" data-perm="tenants.view"><i class="fa-solid fa-users"></i><span>Tenants</span></a>
+<a href="leases.html" data-perm="leases.view"><i class="fa-solid fa-file-contract"></i><span>Leases</span></a>
+<a href="payments.html" data-perm="payments.view"><i class="fa-solid fa-money-bill-wave"></i><span>Payments</span></a>
+<a href="rent_deposits.html" data-perm="rent_deposits.view"><i class="fa-solid fa-hand-holding-dollar"></i><span>Rent Deposits</span></a>
+<a href="maintenance.html" data-perm="maintenance.view"><i class="fa-solid fa-screwdriver-wrench"></i><span>Maintenance</span></a>
+<a href="reports.html" data-perm="reports.view"><i class="fa-solid fa-chart-column"></i><span>Reports</span></a>
+<a href="users.html" class="active" data-perm="users.view"><i class="fa-solid fa-user-shield"></i><span>Users</span></a>
+<a href="settings.html" data-perm="settings.view"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+</div>
+<div class="sidebar-footer">
+<a href="#" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+</div>
+</div>
+
+<div class="topbar" id="topbar">
+<div class="left">
+<div class="toggle" id="toggle"><i class="fa-solid fa-bars"></i></div>
+<div class="search"><i class="fa fa-search"></i><input type="text" id="searchInput" placeholder="Search users..."></div>
+</div>
+<div class="right">
+<button type="button" class="logout-btn" title="Logout"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></button>
+<div class="profile">
+<div class="avatar" id="avatarLetter">A</div>
+<div><strong id="userName">Administrator</strong><br><small id="userRole">Super Admin</small></div>
+</div>
+</div>
+</div>
+
+<div class="content" id="content">
+<div class="page-title">Users & Access</div>
+<div class="breadcrumb">Home / Users</div>
+
+<div class="stats-row">
+<div class="stat-mini"><h3 id="statTotal">0</h3><p>Total Users</p></div>
+<div class="stat-mini"><h3 id="statAdmins">0</h3><p>Super Admins</p></div>
+<div class="stat-mini"><h3 id="statActive">0</h3><p>Active</p></div>
+</div>
+
+<div class="toolbar">
+<div class="toolbar-left">
+<select class="filter-select" id="roleFilter">
+<option value="">All Roles</option>
+<option value="Super Admin">Super Admin</option>
+<option value="Manager">Manager</option>
+<option value="Staff">Staff</option>
+</select>
+</div>
+<div class="toolbar-right">
+<button class="btn btn-primary" id="addBtn" data-perm="users.create"><i class="fa-solid fa-plus"></i> Add User</button>
+</div>
+</div>
+
+<div class="panel">
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Role</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+</div>
+<div class="empty-state" id="emptyState" style="display:none">
+<i class="fa-solid fa-user-shield"></i>
+<p>No users found.</p>
+</div>
+</div>
+
+<div class="panel" style="margin-top:24px">
+<h4 style="margin-bottom:12px;font-size:16px">Role Access Summary</h4>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th>Role</th><th>Access</th></tr>
+</thead>
+<tbody>
+<tr><td><span class="badge role-admin">Super Admin</span></td><td>Full system access including user management</td></tr>
+<tr><td><span class="badge role-manager">Manager</span></td><td>Manage apartments, rooms, tenants, leases, payments, maintenance, reports & settings</td></tr>
+<tr><td><span class="badge role-staff">Staff</span></td><td>View properties; manage tenants & payments & maintenance (limited); cannot delete core data or manage users</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="userModal">
+<div class="modal">
+<div class="modal-header">
+<h3 id="modalTitle">Add User</h3>
+<button class="modal-close" data-close="userModal">&times;</button>
+</div>
+<div class="modal-body">
+<div class="alert" id="modalAlert"></div>
+<form id="userForm">
+<input type="hidden" id="userId">
+<div class="form-grid">
+<div class="form-group full">
+<label for="full_name">Full Name *</label>
+<input class="form-control" type="text" id="full_name" required>
+</div>
+<div class="form-group">
+<label for="email">Email *</label>
+<input class="form-control" type="email" id="email" required>
+</div>
+<div class="form-group">
+<label for="phone">Phone</label>
+<input class="form-control" type="tel" id="phone">
+</div>
+<div class="form-group">
+<label for="role">Role *</label>
+<select class="form-control" id="role">
+<option value="Staff">Staff</option>
+<option value="Manager">Manager</option>
+<option value="Super Admin">Super Admin</option>
+</select>
+</div>
+<div class="form-group">
+<label for="is_active">Status</label>
+<select class="form-control" id="is_active">
+<option value="1">Active</option>
+<option value="0">Inactive</option>
+</select>
+</div>
+<div class="form-group full">
+<label for="password">Password <span id="passwordHint">*</span></label>
+<input class="form-control" type="password" id="password" minlength="6" placeholder="Min 6 characters">
+</div>
+</div>
+</form>
+</div>
+<div class="modal-footer">
+<button class="btn btn-secondary" data-close="userModal">Cancel</button>
+<button class="btn btn-primary" id="saveBtn">Save User</button>
+</div>
+</div>
+</div>
+
+<script src="assets/js/app.js"></script>
+<script>
+let users = [];
+
+async function loadUsers() {
+    const data = await apiRequest('api/users.php');
+    if (!data.success) throw new Error(data.message);
+    users = data.users || [];
+    renderTable();
+}
+
+function renderTable() {
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const role = document.getElementById('roleFilter').value;
+    const filtered = users.filter(u => {
+        const matchQ = u.full_name.toLowerCase().includes(query) ||
+            u.email.toLowerCase().includes(query) ||
+            (u.phone || '').includes(query);
+        const matchR = !role || u.role === role;
+        return matchQ && matchR;
+    });
+
+    document.getElementById('statTotal').textContent = users.length;
+    document.getElementById('statAdmins').textContent = users.filter(u => u.role === 'Super Admin').length;
+    document.getElementById('statActive').textContent = users.filter(u => Number(u.is_active)).length;
+
+    const tbody = document.getElementById('tableBody');
+    const empty = document.getElementById('emptyState');
+
+    if (!filtered.length) {
+        tbody.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+    }
+
+    empty.style.display = 'none';
+    const roleClass = { 'Super Admin': 'role-admin', Manager: 'role-manager', Staff: 'role-staff' };
+
+    tbody.innerHTML = filtered.map(u => `
+        <tr>
+            <td><strong>${escapeHtml(u.full_name)}</strong></td>
+            <td>${escapeHtml(u.email)}</td>
+            <td>${escapeHtml(u.phone || '—')}</td>
+            <td><span class="badge ${roleClass[u.role] || ''}">${escapeHtml(u.role)}</span></td>
+            <td><span class="badge ${Number(u.is_active) ? 'active' : 'inactive'}">${Number(u.is_active) ? 'Active' : 'Inactive'}</span></td>
+            <td class="actions">
+                <button class="btn btn-secondary btn-sm" data-perm="users.update" onclick="editUser(${u.id})">Edit</button>
+                <button class="btn btn-danger btn-sm" data-perm="users.delete" onclick="deleteUser(${u.id}, '${escapeHtml(u.full_name).replace(/'/g, "\\'")}')">Delete</button>
+            </td>
+        </tr>
+    `).join('');
+
+    applyAccessControl();
+}
+
+function resetForm() {
+    document.getElementById('userForm').reset();
+    document.getElementById('userId').value = '';
+    document.getElementById('password').required = true;
+    document.getElementById('passwordHint').textContent = '*';
+    document.getElementById('role').value = 'Staff';
+    document.getElementById('is_active').value = '1';
+    hideAlert(document.getElementById('modalAlert'));
+}
+
+function openCreateModal() {
+    resetForm();
+    document.getElementById('modalTitle').textContent = 'Add User';
+    openModal('userModal');
+}
+
+function editUser(id) {
+    const user = users.find(u => Number(u.id) === Number(id));
+    if (!user) return;
+    resetForm();
+    document.getElementById('modalTitle').textContent = 'Edit User';
+    document.getElementById('userId').value = user.id;
+    document.getElementById('full_name').value = user.full_name;
+    document.getElementById('email').value = user.email;
+    document.getElementById('phone').value = user.phone || '';
+    document.getElementById('role').value = user.role;
+    document.getElementById('is_active').value = Number(user.is_active) ? '1' : '0';
+    document.getElementById('password').required = false;
+    document.getElementById('passwordHint').textContent = '(leave blank to keep)';
+    openModal('userModal');
+}
+
+async function saveUser() {
+    const alertEl = document.getElementById('modalAlert');
+    hideAlert(alertEl);
+
+    const id = document.getElementById('userId').value;
+    const payload = {
+        full_name: document.getElementById('full_name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        role: document.getElementById('role').value,
+        is_active: Number(document.getElementById('is_active').value),
+        password: document.getElementById('password').value,
+    };
+
+    if (!payload.full_name || !payload.email) {
+        showAlert(alertEl, 'Name and email are required.', 'error');
+        return;
+    }
+
+    if (!id && !payload.password) {
+        showAlert(alertEl, 'Password is required for new users.', 'error');
+        return;
+    }
+
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+
+    try {
+        const data = id
+            ? await apiRequest('api/users.php', { method: 'PUT', body: JSON.stringify({ id: Number(id), ...payload }) })
+            : await apiRequest('api/users.php', { method: 'POST', body: JSON.stringify(payload) });
+
+        if (!data.success) {
+            showAlert(alertEl, data.message, 'error');
+            return;
+        }
+
+        closeModal('userModal');
+        await loadUsers();
+    } catch (e) {
+        showAlert(alertEl, e.message || 'Unable to save user.', 'error');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+async function deleteUser(id, name) {
+    if (!confirm(`Delete user "${name}"?`)) return;
+    const data = await apiRequest(`api/users.php?id=${id}`, { method: 'DELETE' });
+    if (!data.success) {
+        alert(data.message);
+        return;
+    }
+    await loadUsers();
+}
+
+document.getElementById('addBtn').addEventListener('click', openCreateModal);
+document.getElementById('saveBtn').addEventListener('click', saveUser);
+document.getElementById('searchInput').addEventListener('input', renderTable);
+document.getElementById('roleFilter').addEventListener('change', renderTable);
+document.querySelectorAll('[data-close]').forEach(btn => {
+    btn.addEventListener('click', () => closeModal(btn.dataset.close));
+});
+
+loadUsers().catch((e) => alert(e.message || 'Failed to load users.'));
+</script>
+</body>
+</html>

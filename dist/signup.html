@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RentSys Pro — Sign Up</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+min-height:100vh;
+display:flex;
+background:#f4f6f9;
+}
+
+.brand-panel{
+flex:1;
+background:linear-gradient(145deg,#1f2937 0%,#111827 55%,#0d6efd 160%);
+color:#fff;
+display:flex;
+flex-direction:column;
+justify-content:center;
+padding:60px;
+position:relative;
+overflow:hidden;
+}
+
+.brand-panel::before{
+content:"";
+position:absolute;
+width:420px;
+height:420px;
+border-radius:50%;
+background:rgba(13,110,253,.18);
+top:-80px;
+right:-100px;
+}
+
+.brand-panel::after{
+content:"";
+position:absolute;
+width:280px;
+height:280px;
+border-radius:50%;
+background:rgba(255,255,255,.05);
+bottom:-60px;
+left:-40px;
+}
+
+.brand-inner{
+position:relative;
+z-index:1;
+max-width:440px;
+}
+
+.brand-logo{
+display:flex;
+align-items:center;
+gap:12px;
+font-size:28px;
+font-weight:600;
+margin-bottom:40px;
+}
+
+.brand-logo i{
+width:52px;
+height:52px;
+border-radius:14px;
+background:rgba(13,110,253,.9);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+}
+
+.brand-inner h1{
+font-size:36px;
+font-weight:600;
+line-height:1.25;
+margin-bottom:16px;
+}
+
+.brand-inner p{
+font-size:15px;
+line-height:1.7;
+color:rgba(255,255,255,.75);
+}
+
+.features{
+margin-top:40px;
+display:flex;
+flex-direction:column;
+gap:14px;
+}
+
+.features li{
+list-style:none;
+display:flex;
+align-items:center;
+gap:12px;
+font-size:14px;
+color:rgba(255,255,255,.85);
+}
+
+.features i{
+color:#6ea8fe;
+}
+
+.form-panel{
+width:480px;
+max-width:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:40px 32px;
+background:#fff;
+}
+
+.form-card{
+width:100%;
+max-width:360px;
+}
+
+.form-card h2{
+font-size:26px;
+font-weight:600;
+color:#222;
+margin-bottom:6px;
+}
+
+.form-card > p{
+color:#777;
+font-size:14px;
+margin-bottom:28px;
+}
+
+.field{
+margin-bottom:18px;
+}
+
+.field label{
+display:block;
+font-size:13px;
+font-weight:500;
+color:#444;
+margin-bottom:8px;
+}
+
+.input-wrap{
+position:relative;
+}
+
+.input-wrap i{
+position:absolute;
+left:14px;
+top:50%;
+transform:translateY(-50%);
+color:#888;
+font-size:14px;
+}
+
+.input-wrap input{
+width:100%;
+padding:12px 14px 12px 42px;
+border:1px solid #ddd;
+border-radius:10px;
+outline:none;
+font-size:14px;
+transition:.2s;
+}
+
+.input-wrap input:focus{
+border-color:#0d6efd;
+box-shadow:0 0 0 3px rgba(13,110,253,.12);
+}
+
+.btn{
+width:100%;
+border:none;
+background:#0d6efd;
+color:#fff;
+padding:13px;
+border-radius:10px;
+font-size:15px;
+font-weight:500;
+cursor:pointer;
+transition:.2s;
+}
+
+.btn:hover{
+background:#0b5ed7;
+}
+
+.btn:disabled{
+opacity:.7;
+cursor:not-allowed;
+}
+
+.error{
+display:none;
+background:#fff1f0;
+color:#c0392b;
+border:1px solid #f5c2c0;
+padding:10px 12px;
+border-radius:8px;
+font-size:13px;
+margin-bottom:16px;
+}
+
+.error.show{
+display:block;
+}
+
+.success{
+display:none;
+background:#d1e7dd;
+color:#0f5132;
+border:1px solid #badbcc;
+padding:10px 12px;
+border-radius:8px;
+font-size:13px;
+margin-bottom:16px;
+}
+
+.success.show{
+display:block;
+}
+
+.footer-link{
+margin-top:22px;
+text-align:center;
+font-size:14px;
+color:#777;
+}
+
+.footer-link a{
+color:#0d6efd;
+text-decoration:none;
+font-weight:500;
+}
+
+.footer-link a:hover{
+text-decoration:underline;
+}
+
+@media(max-width:900px){
+body{
+flex-direction:column;
+}
+.brand-panel{
+padding:36px 28px;
+min-height:auto;
+}
+.brand-inner h1{
+font-size:28px;
+}
+.features{
+display:none;
+}
+.form-panel{
+width:100%;
+flex:1;
+}
+}
+</style>
+</head>
+<body>
+
+<div class="brand-panel">
+<div class="brand-inner">
+<div class="brand-logo">
+<i class="fa-solid fa-building"></i>
+<span>RentSys Pro</span>
+</div>
+<h1>Start managing your rental business today.</h1>
+<p>Create your account to access properties, tenants, leases, payments, and reports from one dashboard.</p>
+<ul class="features">
+<li><i class="fa-solid fa-check"></i> Free account setup in minutes</li>
+<li><i class="fa-solid fa-check"></i> Secure login with encrypted passwords</li>
+<li><i class="fa-solid fa-check"></i> Built for property managers and landlords</li>
+</ul>
+</div>
+</div>
+
+<div class="form-panel">
+<div class="form-card">
+<h2>Create account</h2>
+<p>Fill in your details to get started</p>
+
+<div class="error" id="error"></div>
+<div class="success" id="success"></div>
+
+<form id="signupForm" autocomplete="on">
+<div class="field">
+<label for="full_name">Full Name</label>
+<div class="input-wrap">
+<i class="fa-regular fa-user"></i>
+<input type="text" id="full_name" name="full_name" placeholder="John Doe" required>
+</div>
+</div>
+
+<div class="field">
+<label for="email">Email</label>
+<div class="input-wrap">
+<i class="fa-regular fa-envelope"></i>
+<input type="email" id="email" name="email" placeholder="you@example.com" required>
+</div>
+</div>
+
+<div class="field">
+<label for="phone">Phone (optional)</label>
+<div class="input-wrap">
+<i class="fa-solid fa-phone"></i>
+<input type="tel" id="phone" name="phone" placeholder="+254 700 000 000">
+</div>
+</div>
+
+<div class="field">
+<label for="password">Password</label>
+<div class="input-wrap">
+<i class="fa-solid fa-lock"></i>
+<input type="password" id="password" name="password" placeholder="At least 6 characters" required minlength="6">
+</div>
+</div>
+
+<div class="field">
+<label for="confirm_password">Confirm Password</label>
+<div class="input-wrap">
+<i class="fa-solid fa-lock"></i>
+<input type="password" id="confirm_password" name="confirm_password" placeholder="Re-enter password" required minlength="6">
+</div>
+</div>
+
+<button class="btn" type="submit" id="submitBtn">Create Account</button>
+</form>
+
+<p class="footer-link">Already have an account? <a href="login.html">Sign in</a></p>
+</div>
+</div>
+
+<script>
+if(window.location.protocol === "file:"){
+document.body.innerHTML =
+'<div style="font-family:Poppins,sans-serif;max-width:520px;margin:80px auto;padding:32px;background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);text-align:center">' +
+'<h2 style="margin-bottom:12px;color:#222">Open through a web server</h2>' +
+'<p style="color:#555;line-height:1.6;margin-bottom:16px">Do not double-click this file. Open it through the PHP-enabled web server where the application is hosted.</p>' +
+'</div>';
+}else{
+
+function apiPath(path){
+const base = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/") + 1);
+return base + path;
+}
+
+document.getElementById("signupForm").addEventListener("submit", async function(e){
+e.preventDefault();
+
+const error = document.getElementById("error");
+const success = document.getElementById("success");
+const btn = document.getElementById("submitBtn");
+
+error.classList.remove("show");
+success.classList.remove("show");
+
+const payload = {
+full_name: document.getElementById("full_name").value.trim(),
+email: document.getElementById("email").value.trim(),
+phone: document.getElementById("phone").value.trim(),
+password: document.getElementById("password").value,
+confirm_password: document.getElementById("confirm_password").value
+};
+
+btn.disabled = true;
+btn.textContent = "Creating account...";
+
+try{
+const res = await fetch(apiPath("api/signup.php"), {
+method: "POST",
+credentials: "include",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify(payload)
+});
+
+const text = await res.text();
+let data;
+try{
+data = JSON.parse(text);
+}catch(parseErr){
+throw new Error("Invalid server response. Ensure this server executes PHP and that api/signup.php is available.");
+}
+
+if(data.success){
+success.textContent = data.message;
+success.classList.add("show");
+document.getElementById("signupForm").reset();
+
+setTimeout(function(){
+window.location.href = apiPath("login.html");
+}, 1500);
+return;
+}
+
+error.textContent = data.message || "Signup failed. Please try again.";
+error.classList.add("show");
+}catch(err){
+error.textContent = err.message || "Unable to connect. Verify the PHP server and database are running on this host.";
+error.classList.add("show");
+}finally{
+btn.disabled = false;
+btn.textContent = "Create Account";
+}
+});
+
+}
+</script>
+
+</body>
+</html>

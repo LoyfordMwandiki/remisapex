@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RentSys Pro — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+min-height:100vh;
+display:flex;
+background:#f4f6f9;
+}
+
+.brand-panel{
+flex:1;
+background:linear-gradient(145deg,#1f2937 0%,#111827 55%,#0d6efd 160%);
+color:#fff;
+display:flex;
+flex-direction:column;
+justify-content:center;
+padding:60px;
+position:relative;
+overflow:hidden;
+}
+
+.brand-panel::before{
+content:"";
+position:absolute;
+width:420px;
+height:420px;
+border-radius:50%;
+background:rgba(13,110,253,.18);
+top:-80px;
+right:-100px;
+}
+
+.brand-panel::after{
+content:"";
+position:absolute;
+width:280px;
+height:280px;
+border-radius:50%;
+background:rgba(255,255,255,.05);
+bottom:-60px;
+left:-40px;
+}
+
+.brand-inner{
+position:relative;
+z-index:1;
+max-width:440px;
+}
+
+.brand-logo{
+display:flex;
+align-items:center;
+gap:12px;
+font-size:28px;
+font-weight:600;
+margin-bottom:40px;
+}
+
+.brand-logo i{
+width:52px;
+height:52px;
+border-radius:14px;
+background:rgba(13,110,253,.9);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+}
+
+.brand-inner h1{
+font-size:36px;
+font-weight:600;
+line-height:1.25;
+margin-bottom:16px;
+}
+
+.brand-inner p{
+font-size:15px;
+line-height:1.7;
+color:rgba(255,255,255,.75);
+}
+
+.features{
+margin-top:40px;
+display:flex;
+flex-direction:column;
+gap:14px;
+}
+
+.features li{
+list-style:none;
+display:flex;
+align-items:center;
+gap:12px;
+font-size:14px;
+color:rgba(255,255,255,.85);
+}
+
+.features i{
+color:#6ea8fe;
+}
+
+.form-panel{
+width:480px;
+max-width:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:40px 32px;
+background:#fff;
+}
+
+.form-card{
+width:100%;
+max-width:360px;
+}
+
+.form-card h2{
+font-size:26px;
+font-weight:600;
+color:#222;
+margin-bottom:6px;
+}
+
+.form-card > p{
+color:#777;
+font-size:14px;
+margin-bottom:28px;
+}
+
+.field{
+margin-bottom:18px;
+}
+
+.field label{
+display:block;
+font-size:13px;
+font-weight:500;
+color:#444;
+margin-bottom:8px;
+}
+
+.input-wrap{
+position:relative;
+}
+
+.input-wrap i{
+position:absolute;
+left:14px;
+top:50%;
+transform:translateY(-50%);
+color:#888;
+font-size:14px;
+}
+
+.input-wrap input{
+width:100%;
+padding:12px 14px 12px 42px;
+border:1px solid #ddd;
+border-radius:10px;
+outline:none;
+font-size:14px;
+transition:.2s;
+}
+
+.input-wrap input:focus{
+border-color:#0d6efd;
+box-shadow:0 0 0 3px rgba(13,110,253,.12);
+}
+
+.row{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-bottom:22px;
+font-size:13px;
+}
+
+.row label{
+display:flex;
+align-items:center;
+gap:8px;
+color:#555;
+cursor:pointer;
+}
+
+.row a{
+color:#0d6efd;
+text-decoration:none;
+}
+
+.row a:hover{
+text-decoration:underline;
+}
+
+.btn{
+width:100%;
+border:none;
+background:#0d6efd;
+color:#fff;
+padding:13px;
+border-radius:10px;
+font-size:15px;
+font-weight:500;
+cursor:pointer;
+transition:.2s;
+}
+
+.btn:hover{
+background:#0b5ed7;
+}
+
+.btn:disabled{
+opacity:.7;
+cursor:not-allowed;
+}
+
+.error{
+display:none;
+background:#fff1f0;
+color:#c0392b;
+border:1px solid #f5c2c0;
+padding:10px 12px;
+border-radius:8px;
+font-size:13px;
+margin-bottom:16px;
+}
+
+.error.show{
+display:block;
+}
+
+.footer-link{
+margin-top:22px;
+text-align:center;
+font-size:14px;
+color:#777;
+}
+
+.footer-link a{
+color:#0d6efd;
+text-decoration:none;
+font-weight:500;
+}
+
+.footer-link a:hover{
+text-decoration:underline;
+}
+
+.hint{
+margin-top:14px;
+text-align:center;
+font-size:12px;
+color:#999;
+line-height:1.6;
+}
+
+@media(max-width:900px){
+body{
+flex-direction:column;
+}
+.brand-panel{
+padding:36px 28px;
+min-height:auto;
+}
+.brand-inner h1{
+font-size:28px;
+}
+.features{
+display:none;
+}
+.form-panel{
+width:100%;
+flex:1;
+}
+}
+</style>
+</head>
+<body>
+
+<div class="brand-panel">
+<div class="brand-inner">
+<div class="brand-logo">
+<i class="fa-solid fa-building"></i>
+<span>RentSys Pro</span>
+</div>
+<h1>Manage properties, tenants & payments in one place.</h1>
+<p>Sign in to access your rental operations dashboard — properties, rooms, leases, collections, and reports.</p>
+<ul class="features">
+<li><i class="fa-solid fa-check"></i> Track occupancy across blocks and rooms</li>
+<li><i class="fa-solid fa-check"></i> Monitor leases and overdue payments</li>
+<li><i class="fa-solid fa-check"></i> Generate collection and occupancy reports</li>
+</ul>
+</div>
+</div>
+
+<div class="form-panel">
+<div class="form-card">
+<h2>Welcome back</h2>
+<p>Sign in to continue to your dashboard</p>
+
+<div class="error" id="error">Invalid email or password. Try again.</div>
+
+<form id="loginForm" autocomplete="on">
+<div class="field">
+<label for="email">Email</label>
+<div class="input-wrap">
+<i class="fa-regular fa-envelope"></i>
+<input type="email" id="email" name="email" placeholder="admin@rentsys.com" required value="admin@rentsys.com">
+</div>
+</div>
+
+<div class="field">
+<label for="password">Password</label>
+<div class="input-wrap">
+<i class="fa-solid fa-lock"></i>
+<input type="password" id="password" name="password" placeholder="Enter password" required value="admin123">
+</div>
+</div>
+
+<div class="row">
+<label><input type="checkbox" id="remember" checked> Remember me</label>
+<a href="#">Forgot password?</a>
+</div>
+
+<button class="btn" type="submit" id="submitBtn">Sign In</button>
+</form>
+
+<p class="footer-link">Don't have an account? <a href="signup.html">Sign up</a></p>
+<p class="hint">Demo accounts<br>admin@rentsys.com / admin123 (Super Admin)<br>manager@rentsys.com / manager123<br>staff@rentsys.com / staff123</p>
+</div>
+</div>
+
+<script>
+if(window.location.protocol === "file:"){
+document.body.innerHTML =
+'<div style="font-family:Poppins,sans-serif;max-width:520px;margin:80px auto;padding:32px;background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);text-align:center">' +
+'<h2 style="margin-bottom:12px;color:#222">Open through a web server</h2>' +
+'<p style="color:#555;line-height:1.6;margin-bottom:16px">Do not double-click this file. Open it through the PHP-enabled web server where the application is hosted.</p>' +
+'</div>';
+}else{
+
+function apiPath(path){
+const base = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/") + 1);
+return base + path;
+}
+
+document.getElementById("loginForm").addEventListener("submit", async function(e){
+e.preventDefault();
+
+const email = document.getElementById("email").value.trim().toLowerCase();
+const password = document.getElementById("password").value;
+const error = document.getElementById("error");
+const btn = document.getElementById("submitBtn");
+
+error.classList.remove("show");
+btn.disabled = true;
+btn.textContent = "Signing in...";
+
+try{
+const res = await fetch(apiPath("api/login.php"), {
+method: "POST",
+credentials: "include",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ email, password })
+});
+
+const text = await res.text();
+let data;
+try{
+data = JSON.parse(text);
+}catch(parseErr){
+throw new Error("Invalid server response. Ensure this server executes PHP and that api/login.php is available.");
+}
+
+if(data.success){
+sessionStorage.setItem("rentsys_auth", "1");
+sessionStorage.setItem("rentsys_user", JSON.stringify(data.user));
+window.location.href = apiPath("dashboard.html");
+return;
+}
+
+error.textContent = data.message || "Invalid email or password. Try again.";
+error.classList.add("show");
+}catch(err){
+error.textContent = err.message || "Unable to connect. Verify the PHP server and database are running on this host.";
+error.classList.add("show");
+}finally{
+btn.disabled = false;
+btn.textContent = "Sign In";
+}
+});
+
+}
+</script>
+
+</body>
+</html>

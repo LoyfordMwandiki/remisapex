@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RentSys Pro — Payments</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+<link rel="stylesheet" href="assets/css/app.css"/>
+</head>
+<body data-page-perm="payments.view">
+
+<div class="sidebar" id="sidebar">
+<div class="logo"><i class="fa-solid fa-building"></i><span>RentSys Pro</span></div>
+<div class="menu">
+<a href="dashboard.html" data-perm="dashboard.view"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a>
+<a href="apartments.html" data-perm="apartments.view"><i class="fa-solid fa-building-user"></i><span>Apartments</span></a>
+<a href="rooms.html" data-perm="rooms.view"><i class="fa-solid fa-door-open"></i><span>Rooms</span></a>
+<a href="tenants.html" data-perm="tenants.view"><i class="fa-solid fa-users"></i><span>Tenants</span></a>
+<a href="leases.html" data-perm="leases.view"><i class="fa-solid fa-file-contract"></i><span>Leases</span></a>
+<a href="payments.html" class="active" data-perm="payments.view"><i class="fa-solid fa-money-bill-wave"></i><span>Payments</span></a>
+<a href="rent_deposits.html" data-perm="rent_deposits.view"><i class="fa-solid fa-hand-holding-dollar"></i><span>Rent Deposits</span></a>
+<a href="maintenance.html" data-perm="maintenance.view"><i class="fa-solid fa-screwdriver-wrench"></i><span>Maintenance</span></a>
+<a href="reports.html" data-perm="reports.view"><i class="fa-solid fa-chart-column"></i><span>Reports</span></a>
+<a href="users.html" data-perm="users.view"><i class="fa-solid fa-user-shield"></i><span>Users</span></a>
+<a href="settings.html" data-perm="settings.view"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+</div>
+<div class="sidebar-footer">
+<a href="#" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+</div>
+</div>
+
+<div class="topbar" id="topbar">
+<div class="left">
+<div class="toggle" id="toggle"><i class="fa-solid fa-bars"></i></div>
+<div class="search"><i class="fa fa-search"></i><input type="text" id="searchInput" placeholder="Search payments..."></div>
+</div>
+<div class="right">
+<button type="button" class="logout-btn" title="Logout"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></button>
+<div class="profile">
+<div class="avatar" id="avatarLetter">A</div>
+<div><strong id="userName">Administrator</strong><br><small id="userRole">Super Admin</small></div>
+</div>
+</div>
+</div>
+
+<div class="content" id="content">
+<div class="page-title">Payments</div>
+<div class="breadcrumb">Home / Payments</div>
+
+<div class="stats-row">
+<div class="stat-mini"><h3 id="statTotal">KES 0</h3><p>Total Recorded</p></div>
+<div class="stat-mini"><h3 id="statPaid">KES 0</h3><p>Paid</p></div>
+<div class="stat-mini"><h3 id="statOverdue">KES 0</h3><p>Overdue / Pending</p></div>
+</div>
+
+<div class="toolbar">
+<div class="toolbar-left">
+<select class="filter-select" id="statusFilter">
+<option value="">All Statuses</option>
+<option value="paid">Paid</option>
+<option value="pending">Pending</option>
+<option value="overdue">Overdue</option>
+</select>
+</div>
+<div class="toolbar-right">
+<button class="btn btn-primary" id="addBtn" data-perm="payments.create"><i class="fa-solid fa-plus"></i> Record Payment</button>
+</div>
+</div>
+
+<div class="panel">
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Tenant</th>
+<th>Room</th>
+<th>Amount</th>
+<th>Deposit Paid</th>
+<th>Deposit Balance</th>
+<th>Date</th>
+<th>Method</th>
+<th>Reference</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+</div>
+<div class="empty-state" id="emptyState" style="display:none">
+<i class="fa-solid fa-money-bill-wave"></i>
+<p>No payments recorded yet.</p>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="paymentModal">
+<div class="modal">
+<div class="modal-header">
+<h3 id="modalTitle">Record Payment</h3>
+<button class="modal-close" data-close="paymentModal">&times;</button>
+</div>
+<div class="modal-body">
+<div class="alert" id="modalAlert"></div>
+<form id="paymentForm">
+<input type="hidden" id="paymentId">
+<input type="hidden" id="tenant_id">
+<div class="form-grid">
+<div class="form-group full">
+<label for="lease_id">Lease *</label>
+<select class="form-control" id="lease_id" required></select>
+</div>
+<div class="form-group">
+<label for="amount">Amount (KES) *</label>
+<input class="form-control" type="number" id="amount" min="0.01" step="0.01" required>
+</div>
+<div class="form-group">
+<label for="payment_date">Payment Date *</label>
+<input class="form-control" type="date" id="payment_date" required>
+</div>
+<div class="form-group">
+<label for="payment_method">Method</label>
+<select class="form-control" id="payment_method">
+<option value="cash">Cash</option>
+<option value="mpesa">M-Pesa</option>
+<option value="bank">Bank Transfer</option>
+<option value="card">Card</option>
+</select>
+</div>
+<div class="form-group">
+<label for="status">Status</label>
+<select class="form-control" id="status">
+<option value="paid">Paid</option>
+<option value="pending">Pending</option>
+<option value="overdue">Overdue</option>
+</select>
+</div>
+<div class="form-group">
+<label for="reference_number">Reference No.</label>
+<input class="form-control" type="text" id="reference_number" placeholder="e.g. MPX123456">
+</div>
+<div class="form-group full">
+<label for="notes">Notes</label>
+<textarea class="form-control" id="notes"></textarea>
+</div>
+</div>
+</form>
+</div>
+<div class="modal-footer">
+<button class="btn btn-secondary" data-close="paymentModal">Cancel</button>
+<button class="btn btn-primary" id="saveBtn">Save Payment</button>
+</div>
+</div>
+</div>
+
+<script src="assets/js/app.js"></script>
+<script>
+let payments = [];
+let leases = [];
+
+const params = new URLSearchParams(window.location.search);
+const presetLeaseId = params.get('lease_id') || '';
+
+async function loadLeases() {
+    const data = await apiRequest('api/leases.php');
+    leases = data.leases || [];
+
+    const select = document.getElementById('lease_id');
+    select.innerHTML = '<option value="">Select lease</option>' +
+        leases.map(l =>
+            `<option value="${l.id}" data-tenant="${l.tenant_id}" data-rent="${l.monthly_rent}">
+                ${escapeHtml(l.tenant_name)} — ${escapeHtml(l.apartment_name)} ${escapeHtml(l.room_number)}
+            </option>`
+        ).join('');
+
+    if (presetLeaseId) select.value = presetLeaseId;
+}
+
+async function loadPayments() {
+    const status = document.getElementById('statusFilter').value;
+    let url = 'api/payments.php';
+    const query = [];
+    if (presetLeaseId) query.push(`lease_id=${presetLeaseId}`);
+    if (status) query.push(`status=${status}`);
+    if (query.length) url += '?' + query.join('&');
+
+    const data = await apiRequest(url);
+    if (!data.success) throw new Error(data.message);
+    payments = data.payments || [];
+    renderTable();
+}
+
+function renderTable() {
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const filtered = payments.filter(p =>
+        p.tenant_name.toLowerCase().includes(query) ||
+        p.room_number.toLowerCase().includes(query) ||
+        (p.reference_number || '').toLowerCase().includes(query)
+    );
+
+    const total = payments.reduce((s, p) => s + Number(p.amount), 0);
+    const paid = payments.filter(p => p.status === 'paid').reduce((s, p) => s + Number(p.amount), 0);
+    const overdue = payments.filter(p => p.status !== 'paid').reduce((s, p) => s + Number(p.amount), 0);
+
+    document.getElementById('statTotal').textContent = formatMoney(total);
+    document.getElementById('statPaid').textContent = formatMoney(paid);
+    document.getElementById('statOverdue').textContent = formatMoney(overdue);
+
+    const tbody = document.getElementById('tableBody');
+    const empty = document.getElementById('emptyState');
+
+    if (!filtered.length) {
+        tbody.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+    }
+
+    empty.style.display = 'none';
+    tbody.innerHTML = filtered.map(p => `
+        <tr>
+            <td><strong>${escapeHtml(p.tenant_name)}</strong></td>
+            <td>${escapeHtml(p.apartment_name)} ${escapeHtml(p.room_number)}</td>
+            <td>${formatMoney(p.amount)}</td>
+            <td>${formatMoney(p.deposit_paid)}</td>
+            <td>${formatMoney(p.deposit_balance)}</td>
+            <td>${p.payment_date}</td>
+            <td>${escapeHtml(p.payment_method)}</td>
+            <td>${escapeHtml(p.reference_number || '—')}</td>
+            <td><span class="badge ${p.status}">${p.status}</span></td>
+            <td class="actions">
+                ${can('payments.update') ? `<button class="btn btn-secondary btn-sm" onclick="editPayment(${p.id})">Edit</button>` : ''}
+                ${can('payments.delete') ? `<button class="btn btn-danger btn-sm" onclick="deletePayment(${p.id})">Delete</button>` : ''}
+            </td>
+        </tr>
+    `).join('');
+}
+
+function resetForm() {
+    document.getElementById('paymentForm').reset();
+    document.getElementById('paymentId').value = '';
+    document.getElementById('tenant_id').value = '';
+    document.getElementById('payment_date').value = new Date().toISOString().slice(0, 10);
+    hideAlert(document.getElementById('modalAlert'));
+    if (presetLeaseId) {
+        document.getElementById('lease_id').value = presetLeaseId;
+        fillFromLease();
+    }
+}
+
+function fillFromLease() {
+    const select = document.getElementById('lease_id');
+    const opt = select.options[select.selectedIndex];
+    if (!opt || !opt.value) return;
+    document.getElementById('tenant_id').value = opt.dataset.tenant;
+    if (!document.getElementById('paymentId').value) {
+        document.getElementById('amount').value = opt.dataset.rent || '';
+    }
+}
+
+function openCreateModal() {
+    if (!leases.length) {
+        alert('Please create a lease first.');
+        window.location.href = 'leases.html';
+        return;
+    }
+    resetForm();
+    document.getElementById('modalTitle').textContent = 'Record Payment';
+    openModal('paymentModal');
+}
+
+function editPayment(id) {
+    const payment = payments.find(p => Number(p.id) === Number(id));
+    if (!payment) return;
+    resetForm();
+    document.getElementById('modalTitle').textContent = 'Edit Payment';
+    document.getElementById('paymentId').value = payment.id;
+    document.getElementById('lease_id').value = payment.lease_id;
+    document.getElementById('tenant_id').value = payment.tenant_id;
+    document.getElementById('amount').value = payment.amount;
+    document.getElementById('payment_date').value = payment.payment_date;
+    document.getElementById('payment_method').value = payment.payment_method;
+    document.getElementById('status').value = payment.status;
+    document.getElementById('reference_number').value = payment.reference_number || '';
+    document.getElementById('notes').value = payment.notes || '';
+    openModal('paymentModal');
+}
+
+async function savePayment() {
+    const alertEl = document.getElementById('modalAlert');
+    hideAlert(alertEl);
+
+    const id = document.getElementById('paymentId').value;
+    fillFromLease();
+
+    const payload = {
+        lease_id: Number(document.getElementById('lease_id').value),
+        tenant_id: Number(document.getElementById('tenant_id').value),
+        amount: document.getElementById('amount').value,
+        payment_date: document.getElementById('payment_date').value,
+        payment_method: document.getElementById('payment_method').value,
+        status: document.getElementById('status').value,
+        reference_number: document.getElementById('reference_number').value.trim(),
+        notes: document.getElementById('notes').value.trim(),
+    };
+
+    if (!payload.lease_id || !payload.tenant_id || !payload.payment_date || Number(payload.amount) <= 0) {
+        showAlert(alertEl, 'Lease, date, and amount are required.', 'error');
+        return;
+    }
+
+    const dateError = validateNotFutureDate(payload.payment_date, 'Payment date');
+    if (dateError) {
+        showAlert(alertEl, dateError, 'error');
+        return;
+    }
+
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+
+    try {
+        const data = id
+            ? await apiRequest('api/payments.php', { method: 'PUT', body: JSON.stringify({ id: Number(id), ...payload }) })
+            : await apiRequest('api/payments.php', { method: 'POST', body: JSON.stringify(payload) });
+
+        if (!data.success) {
+            showAlert(alertEl, data.message, 'error');
+            return;
+        }
+
+        closeModal('paymentModal');
+        await loadPayments();
+    } catch (e) {
+        showAlert(alertEl, 'Unable to save payment.', 'error');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+async function deletePayment(id) {
+    if (!confirm('Delete this payment record?')) return;
+    const data = await apiRequest(`api/payments.php?id=${id}`, { method: 'DELETE' });
+    if (!data.success) {
+        alert(data.message);
+        return;
+    }
+    await loadPayments();
+}
+
+document.getElementById('addBtn').addEventListener('click', openCreateModal);
+document.getElementById('saveBtn').addEventListener('click', savePayment);
+document.getElementById('searchInput').addEventListener('input', renderTable);
+document.getElementById('statusFilter').addEventListener('change', loadPayments);
+document.getElementById('lease_id').addEventListener('change', fillFromLease);
+initDateInput(document.getElementById('payment_date'), { defaultToday: true });
+document.querySelectorAll('[data-close]').forEach(btn => {
+    btn.addEventListener('click', () => closeModal(btn.dataset.close));
+});
+
+Promise.all([loadLeases(), loadPayments()]).catch(() => alert('Failed to load payments.'));
+</script>
+
+</body>
+</html>
